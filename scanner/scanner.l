@@ -28,6 +28,6 @@ number [0-9]+\.[0-9]+
 ";"             { printf("%d: %s -> %s\n", yylineno, yytext, "SEMI"); }
 ","             { printf("%d: %s -> %s\n", yylineno, yytext, "COMMA"); }
 {name}          { printf("%d: %s -> %s\n", yylineno, yytext, "NAME"); }
-
+<<EOF>>         { printf("%d: %s -> %s\n", yylineno, yytext, "ENDMARKER"); return 0; }
 
 %%

@@ -894,14 +894,16 @@ YY_RULE_SETUP
 #line 30 "scanner.l"
 { printf("%d: %s -> %s\n", yylineno, yytext, "NAME"); }
 	YY_BREAK
+case YY_STATE_EOF(INITIAL):
+#line 31 "scanner.l"
+{ printf("%d: %s -> %s\n", yylineno, yytext, "ENDMARKER"); return 0; }
+	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 33 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 903 "lex.yy.c"
-case YY_STATE_EOF(INITIAL):
-	yyterminate();
+#line 907 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
