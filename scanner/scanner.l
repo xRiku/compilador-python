@@ -24,7 +24,8 @@ void process_indent(char* line) ;
 %option noyywrap
 %option yylineno
 name   [a-zA-Z0-9_]+
-number [0-9]+\.[0-9]+
+number [0-9]+\.[0-9]+|[0-9]|[1-9][0-9]*
+string \"[^\"]*\"|\'[^\']*\'
 %%
 \n              {
                     if (chars != 0){
@@ -44,7 +45,7 @@ number [0-9]+\.[0-9]+
                 }
 [ ]             {chars++;}
 {number}        { printf("%d: %s -> %s\n", yylineno, yytext, "NUMBER"); chars++; }
-\"[^\"]*\"      { printf("%d: %s -> %s\n", yylineno, yytext, "STRING"); chars++; }
+f?{string}      { printf("%d: %s -> %s\n", yylineno, yytext, "STRING"); chars++; }
 "+"             { printf("%d: %s -> %s\n", yylineno, yytext, "PLUS"); chars++; }
 "-"             { printf("%d: %s -> %s\n", yylineno, yytext, "MINUS"); chars++; }
 "**"            { printf("%d: %s -> %s\n", yylineno, yytext, "DOUBLESTAR"); chars++; }
