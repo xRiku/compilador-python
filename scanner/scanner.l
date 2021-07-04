@@ -1,9 +1,27 @@
 %{
-#include<stdio.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
+#define MAX_DEPTH 72
+
+
 int lines = 0, chars = 0;
+
+int open_parentheses = 0 ;
+unsigned int indent_stack[MAX_DEPTH] ;
+unsigned int level = 0 ;
+
+unsigned int first = 1 ;
+
+void process_indent(char* line) ;
+
+
 /* Global vars */
+// ^[ ]*\n       {/* Ignore blank lines. */} 
+// [ ]{4}|\t       { printf("%d: %s -> %s\n", yylineno, "\\t", "INDENT"); chars++; }
 %}
 
+%option noyywrap
 %option yylineno
 name   [a-zA-Z0-9_]+
 number [0-9]+\.[0-9]+
@@ -16,24 +34,31 @@ number [0-9]+\.[0-9]+
                     }
                     chars = 0;
                 }
-[ ]{4}|\t       { printf("%d: %s -> %s\n", yylineno, "\\t", "INDENT"); chars++; }
+^[ ]*[^ \n]+   {
+                    int last = yyleng - 1;
+                    process_indent(yytext) ;
+                    while ((last >= 0) && (yytext[last] != ' ')) {
+                        unput(yytext[last]);
+                        last-- ;
+                    }
+                }
 [ ]             {chars++;}
 {number}        { printf("%d: %s -> %s\n", yylineno, yytext, "NUMBER"); chars++; }
 \"[^\"]*\"      { printf("%d: %s -> %s\n", yylineno, yytext, "STRING"); chars++; }
 "+"             { printf("%d: %s -> %s\n", yylineno, yytext, "PLUS"); chars++; }
 "-"             { printf("%d: %s -> %s\n", yylineno, yytext, "MINUS"); chars++; }
-"*"             { printf("%d: %s -> %s\n", yylineno, yytext, "STAR"); chars++; }
 "**"            { printf("%d: %s -> %s\n", yylineno, yytext, "DOUBLESTAR"); chars++; }
+"*"             { printf("%d: %s -> %s\n", yylineno, yytext, "STAR"); chars++; }
 "/"             { printf("%d: %s -> %s\n", yylineno, yytext, "SLASH"); chars++; }
-"="             { printf("%d: %s -> %s\n", yylineno, yytext, "EQUAL"); chars++; }
 "=="            { printf("%d: %s -> %s\n", yylineno, yytext, "EQEQUAL"); chars++; }
+"="             { printf("%d: %s -> %s\n", yylineno, yytext, "EQUAL"); chars++; }
 "!="            { printf("%d: %s -> %s\n", yylineno, yytext, "NOTEQUAL"); chars++; }
 "<"             { printf("%d: %s -> %s\n", yylineno, yytext, "LESS"); chars++; }
 "<="            { printf("%d: %s -> %s\n", yylineno, yytext, "LESSEQUAL"); chars++; }
 ">"             { printf("%d: %s -> %s\n", yylineno, yytext, "GREATER"); chars++; }
 ">="            { printf("%d: %s -> %s\n", yylineno, yytext, "GREATEREQUAL"); chars++; }
-"("             { printf("%d: %s -> %s\n", yylineno, yytext, "LPAR"); chars++; }
-")"             { printf("%d: %s -> %s\n", yylineno, yytext, "RPAR"); chars++; }
+"("             { printf("%d: %s -> %s\n", yylineno, yytext, "LPAR"); chars++; open_parentheses++; }
+")"             { printf("%d: %s -> %s\n", yylineno, yytext, "RPAR"); chars++; open_parentheses--; }
 "["             { printf("%d: %s -> %s\n", yylineno, yytext, "LSQB"); chars++; }
 "]"             { printf("%d: %s -> %s\n", yylineno, yytext, "RSQB"); chars++; }
 "{"             { printf("%d: %s -> %s\n", yylineno, yytext, "LBRACE"); chars++; }
@@ -42,6 +67,47 @@ number [0-9]+\.[0-9]+
 ";"             { printf("%d: %s -> %s\n", yylineno, yytext, "SEMI"); chars++; }
 ","             { printf("%d: %s -> %s\n", yylineno, yytext, "COMMA"); chars++; }
 {name}          { printf("%d: %s -> %s\n", yylineno, yytext, "NAME"); chars++; }
-<<EOF>>         { printf("%d: %s -> %s\n", yylineno, yytext, "ENDMARKER"); return 0; }
+<<EOF>>         { process_indent(""); printf("%d: %s -> %s\n", yylineno, "EOF", "ENDMARKER"); return 0; }
 
 %%
+
+unsigned int white_count(char* line) {
+  unsigned int count = 0 ;
+  while (*line == ' ')
+    count++, line++ ;
+  return count ;
+}
+
+void process_indent(char* line) {
+  if (open_parentheses)
+    /* Ignore indents while nested. */
+    return ;
+
+  unsigned int indent = white_count(line) ;
+
+  if (indent == indent_stack[level]) {
+    if (!first);
+    first = 0 ;
+    return ;
+  }
+
+  if (indent > indent_stack[level]) {
+    printf("%d: %s -> %s\n", yylineno, "\\t", "INDENT") ;
+    assert(level+1 < MAX_DEPTH) ;
+    indent_stack[++level] = indent ;
+    return ;
+  }
+
+  while (indent < indent_stack[level]) {
+    --level;
+    printf("%d: %s -> %s\n", yylineno, "\"\"", "DEDENT") ;
+  }
+
+  assert(level >= 0) ;
+}
+
+int main(int argc, char* argv[]) {
+  indent_stack[0] = 0 ;
+  yylex() ;
+  printf("\n") ;
+}
