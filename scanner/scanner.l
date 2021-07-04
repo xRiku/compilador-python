@@ -1,20 +1,16 @@
 %option yylineno
-
 name   [a-zA-Z0-9_]+
 number [0-9]+\.[0-9]+
 %%
 
+
 {number}        { printf("%d: %s -> %s\n", yylineno, yytext, "NUMBER"); }
 \"[^\"]*\"      { printf("%d: %s -> %s\n", yylineno, yytext, "STRING"); }
-
-
-
 "+"             { printf("%d: %s -> %s\n", yylineno, yytext, "PLUS"); }
 "-"             { printf("%d: %s -> %s\n", yylineno, yytext, "MINUS"); }
 "*"             { printf("%d: %s -> %s\n", yylineno, yytext, "STAR"); }
 "**"            { printf("%d: %s -> %s\n", yylineno, yytext, "DOUBLESTAR"); }
 "/"             { printf("%d: %s -> %s\n", yylineno, yytext, "SLASH"); }
-";"             { printf("%d: %s -> %s\n", yylineno, yytext, "SEMI"); }
 "="             { printf("%d: %s -> %s\n", yylineno, yytext, "EQUAL"); }
 "=="            { printf("%d: %s -> %s\n", yylineno, yytext, "EQEQUAL"); }
 "!="            { printf("%d: %s -> %s\n", yylineno, yytext, "NOTEQUAL"); }
@@ -22,10 +18,6 @@ number [0-9]+\.[0-9]+
 "<="            { printf("%d: %s -> %s\n", yylineno, yytext, "LESSEQUAL"); }
 ">"             { printf("%d: %s -> %s\n", yylineno, yytext, "GREATER"); }
 ">="            { printf("%d: %s -> %s\n", yylineno, yytext, "GREATEREQUAL"); }
-
-
-
-
 "("             { printf("%d: %s -> %s\n", yylineno, yytext, "LPAR"); }
 ")"             { printf("%d: %s -> %s\n", yylineno, yytext, "RPAR"); }
 "["             { printf("%d: %s -> %s\n", yylineno, yytext, "LSQB"); }
@@ -33,12 +25,9 @@ number [0-9]+\.[0-9]+
 "{"             { printf("%d: %s -> %s\n", yylineno, yytext, "LBRACE"); }
 "}"             { printf("%d: %s -> %s\n", yylineno, yytext, "RBRACE"); }
 ":"             { printf("%d: %s -> %s\n", yylineno, yytext, "COLON"); }
-","             { printf("%d: %s -> %s\n", yylineno, yytext, "COMMA"); }
 ";"             { printf("%d: %s -> %s\n", yylineno, yytext, "SEMI"); }
-
-
-{name}          { printf("%d: %s -> %s\n", yylineno, yytext, "NAME");}
-<<EOF>>         { printf("%d: %s -> %s\n", yylineno, yytext, "ENDMARKER"); }
+","             { printf("%d: %s -> %s\n", yylineno, yytext, "COMMA"); }
+{name}          { printf("%d: %s -> %s\n", yylineno, yytext, "NAME"); }
 
 
 %%
