@@ -1,5 +1,6 @@
 %option yylineno
 
+name   [a-zA-Z0-9_]+
 number [0-9]+\.[0-9]+
 %%
 
@@ -36,6 +37,7 @@ number [0-9]+\.[0-9]+
 ";"             { printf("%d: %s -> %s\n", yylineno, yytext, "SEMI"); }
 
 
+{name}          { printf("%d: %s -> %s\n", yylineno, yytext, "NAME");}
 <<EOF>>         { printf("%d: %s -> %s\n", yylineno, yytext, "ENDMARKER"); }
 
 
