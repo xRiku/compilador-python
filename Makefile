@@ -12,5 +12,8 @@ gcc: scanner.c parser.c
 test1: all
 	./a.out < tests/input01.py
 
+test2: all
+	./a.out < tests/input02.py
+
 clean:
 	@rm -f *.o *.output scanner.c parser.h parser.c a.out

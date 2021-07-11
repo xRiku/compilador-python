@@ -56,7 +56,7 @@ f?{string}      { printf("%d: %s -> %s\n", yylineno, yytext, "STRING"); chars++;
 "*"             { printf("%d: %s -> %s\n", yylineno, yytext, "STAR"); chars++; return STAR;}
 "/"             { printf("%d: %s -> %s\n", yylineno, yytext, "SLASH"); chars++; return OVER;}
 "=="            { printf("%d: %s -> %s\n", yylineno, yytext, "EQEQUAL"); chars++; }
-"="             { printf("%d: %s -> %s\n", yylineno, yytext, "EQUAL"); chars++; }
+"="             { printf("%d: %s -> %s\n", yylineno, yytext, "EQUAL"); chars++; return EQUAL;}
 "!="            { printf("%d: %s -> %s\n", yylineno, yytext, "NOTEQUAL"); chars++; }
 "<"             { printf("%d: %s -> %s\n", yylineno, yytext, "LESS"); chars++; }
 "<="            { printf("%d: %s -> %s\n", yylineno, yytext, "LESSEQUAL"); chars++; }
@@ -82,7 +82,7 @@ return          { printf("%d: %s -> %s\n", yylineno, yytext, "RETURN"); chars++;
 if              { printf("%d: %s -> %s\n", yylineno, yytext, "IF"); chars++; }
 elif            { printf("%d: %s -> %s\n", yylineno, yytext, "ELIF"); chars++; }
 else            { printf("%d: %s -> %s\n", yylineno, yytext, "ELSE"); chars++; }
-{name}          { printf("%d: %s -> %s\n", yylineno, yytext, "NAME"); chars++; }
+{name}          { printf("%d: %s -> %s\n", yylineno, yytext, "NAME"); chars++; return NAME;}
 <<EOF>>         { process_indent(""); printf("%d: %s -> %s\n", yylineno, "EOF", "ENDMARKER"); return 0; }
 
 %%
@@ -121,9 +121,3 @@ void process_indent(char* line) {
 
   assert(level >= 0) ;
 }
-
-/* int main(int argc, char* argv[]) {
-  indent_stack[0] = 0 ;
-  yylex() ;
-  printf("\n") ;
-} */

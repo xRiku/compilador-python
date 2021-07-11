@@ -5,7 +5,7 @@
     void yyerror(char const *s);
     int yylineno;
 %}
-%token NUMBER LPAR RPAR PLUS MINUS STAR OVER DOUBLESTAR ENTER
+%token NUMBER LPAR RPAR PLUS MINUS STAR OVER DOUBLESTAR ENTER NAME EQUAL
 %left PLUS MINUS
 %left STAR OVER
 %precedence UMINUS
@@ -13,7 +13,9 @@
 %%
 /* Garante que não para na primeira linha */
 lines: lines line | line;
-line: expr ENTER ;
+line: 
+      expr ENTER 
+    | attr ENTER;
 /* Possíveis operações */
 expr:
       expr PLUS expr
@@ -22,7 +24,11 @@ expr:
     | expr OVER expr
     | MINUS expr %prec UMINUS
     | expr DOUBLESTAR expr
+    | LPAR expr RPAR
+    | NAME
     | NUMBER ;
+/* Operações de atribuição */
+attr: NAME EQUAL expr 
 %%
 
 void yyerror (char const *s) {
