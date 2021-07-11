@@ -67,6 +67,16 @@ f?{string}      { printf("%d: %s -> %s\n", yylineno, yytext, "STRING"); chars++;
 ":"             { printf("%d: %s -> %s\n", yylineno, yytext, "COLON"); chars++; }
 ";"             { printf("%d: %s -> %s\n", yylineno, yytext, "SEMI"); chars++; }
 ","             { printf("%d: %s -> %s\n", yylineno, yytext, "COMMA"); chars++; }
+for             { printf("%d: %s -> %s\n", yylineno, yytext, "FOR"); chars++; }
+in              { printf("%d: %s -> %s\n", yylineno, yytext, "IN"); chars++; }
+while           { printf("%d: %s -> %s\n", yylineno, yytext, "WHILE"); chars++; }
+break           { printf("%d: %s -> %s\n", yylineno, yytext, "BREAK"); chars++; }
+continue        { printf("%d: %s -> %s\n", yylineno, yytext, "CONTINUE"); chars++; }
+def             { printf("%d: %s -> %s\n", yylineno, yytext, "DEF"); chars++; }
+pass            { printf("%d: %s -> %s\n", yylineno, yytext, "PASS"); chars++; }
+if              { printf("%d: %s -> %s\n", yylineno, yytext, "IF"); chars++; }
+elif            { printf("%d: %s -> %s\n", yylineno, yytext, "ELIF"); chars++; }
+else            { printf("%d: %s -> %s\n", yylineno, yytext, "ELSE"); chars++; }
 {name}          { printf("%d: %s -> %s\n", yylineno, yytext, "NAME"); chars++; }
 <<EOF>>         { process_indent(""); printf("%d: %s -> %s\n", yylineno, "EOF", "ENDMARKER"); return 0; }
 
