@@ -3,8 +3,8 @@ all: scanner compile exec
 scanner: scanner.l
 	flex scanner.l
 
-compile: lex.yy.c
-	gcc -o scanner lex.yy.c -lfl
+compile: scanner.c
+	gcc -o scanner scanner.c -lfl
 
 tests: scanner compile 
 
