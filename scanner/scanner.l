@@ -1,4 +1,7 @@
+%option outfile="scanner/scanner.c" 
+%option noinput
 %{
+#include "../parser/parser.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
@@ -34,6 +37,7 @@ string \"[^\"]*\"|\'[^\']*\'
                         printf("%d: %s -> %s\n", yylineno, "\\n", "NL");
                     }
                     chars = 0;
+                    return ENTER;
                 }
 ^[ ]*[^ \n]+   {
                     int last = yyleng - 1;
@@ -44,9 +48,9 @@ string \"[^\"]*\"|\'[^\']*\'
                     }
                 }
 [ ]             {chars++;}
-{number}        { printf("%d: %s -> %s\n", yylineno, yytext, "NUMBER"); chars++; }
+{number}        { printf("%d: %s -> %s\n", yylineno, yytext, "NUMBER"); chars++; return NUMBER;}
 f?{string}      { printf("%d: %s -> %s\n", yylineno, yytext, "STRING"); chars++; }
-"+"             { printf("%d: %s -> %s\n", yylineno, yytext, "PLUS"); chars++; }
+"+"             { printf("%d: %s -> %s\n", yylineno, yytext, "PLUS"); chars++; return PLUS; }
 "-"             { printf("%d: %s -> %s\n", yylineno, yytext, "MINUS"); chars++; }
 "**"            { printf("%d: %s -> %s\n", yylineno, yytext, "DOUBLESTAR"); chars++; }
 "*"             { printf("%d: %s -> %s\n", yylineno, yytext, "STAR"); chars++; }
@@ -58,8 +62,8 @@ f?{string}      { printf("%d: %s -> %s\n", yylineno, yytext, "STRING"); chars++;
 "<="            { printf("%d: %s -> %s\n", yylineno, yytext, "LESSEQUAL"); chars++; }
 ">"             { printf("%d: %s -> %s\n", yylineno, yytext, "GREATER"); chars++; }
 ">="            { printf("%d: %s -> %s\n", yylineno, yytext, "GREATEREQUAL"); chars++; }
-"("             { printf("%d: %s -> %s\n", yylineno, yytext, "LPAR"); chars++; open_parentheses++; }
-")"             { printf("%d: %s -> %s\n", yylineno, yytext, "RPAR"); chars++; open_parentheses--; }
+"("             { return LPAR; printf("%d: %s -> %s\n", yylineno, yytext, "LPAR"); chars++; open_parentheses++; }
+")"             { return RPAR; printf("%d: %s -> %s\n", yylineno, yytext, "RPAR"); chars++; open_parentheses--; }
 "["             { printf("%d: %s -> %s\n", yylineno, yytext, "LSQB"); chars++; }
 "]"             { printf("%d: %s -> %s\n", yylineno, yytext, "RSQB"); chars++; }
 "{"             { printf("%d: %s -> %s\n", yylineno, yytext, "LBRACE"); chars++; }
@@ -74,11 +78,12 @@ break           { printf("%d: %s -> %s\n", yylineno, yytext, "BREAK"); chars++; 
 continue        { printf("%d: %s -> %s\n", yylineno, yytext, "CONTINUE"); chars++; }
 def             { printf("%d: %s -> %s\n", yylineno, yytext, "DEF"); chars++; }
 pass            { printf("%d: %s -> %s\n", yylineno, yytext, "PASS"); chars++; }
+return          { printf("%d: %s -> %s\n", yylineno, yytext, "RETURN"); chars++; }
 if              { printf("%d: %s -> %s\n", yylineno, yytext, "IF"); chars++; }
 elif            { printf("%d: %s -> %s\n", yylineno, yytext, "ELIF"); chars++; }
 else            { printf("%d: %s -> %s\n", yylineno, yytext, "ELSE"); chars++; }
 {name}          { printf("%d: %s -> %s\n", yylineno, yytext, "NAME"); chars++; }
-<<EOF>>         { process_indent(""); printf("%d: %s -> %s\n", yylineno, "EOF", "ENDMARKER"); return 0; }
+<<EOF>>         { process_indent(""); printf("%d: %s -> %s\n", yylineno, "EOF", "ENDMARKER"); return EOF; }
 
 %%
 
@@ -117,8 +122,8 @@ void process_indent(char* line) {
   assert(level >= 0) ;
 }
 
-int main(int argc, char* argv[]) {
+/* int main(int argc, char* argv[]) {
   indent_stack[0] = 0 ;
   yylex() ;
   printf("\n") ;
-}
+} */
