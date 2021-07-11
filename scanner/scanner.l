@@ -52,7 +52,7 @@ string \"[^\"]*\"|\'[^\']*\'
 f?{string}      { printf("%d: %s -> %s\n", yylineno, yytext, "STRING"); chars++; }
 "+"             { printf("%d: %s -> %s\n", yylineno, yytext, "PLUS"); chars++; return PLUS; }
 "-"             { printf("%d: %s -> %s\n", yylineno, yytext, "MINUS"); chars++; return MINUS; }
-"**"            { printf("%d: %s -> %s\n", yylineno, yytext, "DOUBLESTAR"); chars++; }
+"**"            { printf("%d: %s -> %s\n", yylineno, yytext, "DOUBLESTAR"); chars++; return DOUBLESTAR; }
 "*"             { printf("%d: %s -> %s\n", yylineno, yytext, "STAR"); chars++; return STAR;}
 "/"             { printf("%d: %s -> %s\n", yylineno, yytext, "SLASH"); chars++; return OVER;}
 "=="            { printf("%d: %s -> %s\n", yylineno, yytext, "EQEQUAL"); chars++; }
@@ -62,8 +62,8 @@ f?{string}      { printf("%d: %s -> %s\n", yylineno, yytext, "STRING"); chars++;
 "<="            { printf("%d: %s -> %s\n", yylineno, yytext, "LESSEQUAL"); chars++; }
 ">"             { printf("%d: %s -> %s\n", yylineno, yytext, "GREATER"); chars++; }
 ">="            { printf("%d: %s -> %s\n", yylineno, yytext, "GREATEREQUAL"); chars++; }
-"("             { return LPAR; printf("%d: %s -> %s\n", yylineno, yytext, "LPAR"); chars++; open_parentheses++; }
-")"             { return RPAR; printf("%d: %s -> %s\n", yylineno, yytext, "RPAR"); chars++; open_parentheses--; }
+"("             { printf("%d: %s -> %s\n", yylineno, yytext, "LPAR"); chars++; open_parentheses++; return LPAR;}
+")"             { printf("%d: %s -> %s\n", yylineno, yytext, "RPAR"); chars++; open_parentheses--; return RPAR; }
 "["             { printf("%d: %s -> %s\n", yylineno, yytext, "LSQB"); chars++; }
 "]"             { printf("%d: %s -> %s\n", yylineno, yytext, "RSQB"); chars++; }
 "{"             { printf("%d: %s -> %s\n", yylineno, yytext, "LBRACE"); chars++; }
