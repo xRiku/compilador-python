@@ -16,10 +16,12 @@
 /* Outros */
 %token NAME ENTER
 /* Definindo prioridade */
+%left EQEQUAL NOTEQUAL LESS LESSEQUAL GREATER GREATEREQUAL
 %left PLUS MINUS
 %left STAR OVER
 %precedence UMINUS
 %right DOUBLESTAR
+
 %%
 /* Garante que não para na primeira linha */
 lines: lines line | line;
