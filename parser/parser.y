@@ -5,7 +5,7 @@
     void yyerror(char const *s);
     int yylineno;
 %}
-%token NUMBER LPAR RPAR PLUS MINUS STAR OVER DOUBLESTAR ENTER NAME EQUAL
+%token NUMBER LPAR RPAR PLUS MINUS STAR OVER DOUBLESTAR ENTER NAME EQUAL LSQB RSQB COMMA STRING
 %left PLUS MINUS
 %left STAR OVER
 %precedence UMINUS
@@ -28,7 +28,11 @@ expr:
     | NAME
     | NUMBER ;
 /* Operações de atribuição */
-attr: NAME EQUAL expr 
+attr: NAME EQUAL expr | NAME EQUAL dtstrct;
+/* Para definir uma lista, não cobre o caso de uma lista com uma variavel */
+types: NUMBER | STRING;
+opt: types COMMA opt | types | %empty ;
+dtstrct: LSQB opt RSQB;
 %%
 
 void yyerror (char const *s) {

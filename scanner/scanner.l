@@ -48,8 +48,8 @@ string \"[^\"]*\"|\'[^\']*\'
                     }
                 }
 [ ]             {chars++;}
-{number}        { printf("%d: %s -> %s\n", yylineno, yytext, "NUMBER"); chars++; return NUMBER;}
-f?{string}      { printf("%d: %s -> %s\n", yylineno, yytext, "STRING"); chars++; }
+{number}        { printf("%d: %s -> %s\n", yylineno, yytext, "NUMBER"); chars++; return NUMBER; }
+f?{string}      { printf("%d: %s -> %s\n", yylineno, yytext, "STRING"); chars++; return STRING; }
 "+"             { printf("%d: %s -> %s\n", yylineno, yytext, "PLUS"); chars++; return PLUS; }
 "-"             { printf("%d: %s -> %s\n", yylineno, yytext, "MINUS"); chars++; return MINUS; }
 "**"            { printf("%d: %s -> %s\n", yylineno, yytext, "DOUBLESTAR"); chars++; return DOUBLESTAR; }
@@ -62,15 +62,15 @@ f?{string}      { printf("%d: %s -> %s\n", yylineno, yytext, "STRING"); chars++;
 "<="            { printf("%d: %s -> %s\n", yylineno, yytext, "LESSEQUAL"); chars++; }
 ">"             { printf("%d: %s -> %s\n", yylineno, yytext, "GREATER"); chars++; }
 ">="            { printf("%d: %s -> %s\n", yylineno, yytext, "GREATEREQUAL"); chars++; }
-"("             { printf("%d: %s -> %s\n", yylineno, yytext, "LPAR"); chars++; open_parentheses++; return LPAR;}
+"("             { printf("%d: %s -> %s\n", yylineno, yytext, "LPAR"); chars++; open_parentheses++; return LPAR; }
 ")"             { printf("%d: %s -> %s\n", yylineno, yytext, "RPAR"); chars++; open_parentheses--; return RPAR; }
-"["             { printf("%d: %s -> %s\n", yylineno, yytext, "LSQB"); chars++; }
-"]"             { printf("%d: %s -> %s\n", yylineno, yytext, "RSQB"); chars++; }
+"["             { printf("%d: %s -> %s\n", yylineno, yytext, "LSQB"); chars++; return LSQB; }
+"]"             { printf("%d: %s -> %s\n", yylineno, yytext, "RSQB"); chars++; return RSQB; }
 "{"             { printf("%d: %s -> %s\n", yylineno, yytext, "LBRACE"); chars++; }
 "}"             { printf("%d: %s -> %s\n", yylineno, yytext, "RBRACE"); chars++; }
 ":"             { printf("%d: %s -> %s\n", yylineno, yytext, "COLON"); chars++; }
 ";"             { printf("%d: %s -> %s\n", yylineno, yytext, "SEMI"); chars++; }
-","             { printf("%d: %s -> %s\n", yylineno, yytext, "COMMA"); chars++; }
+","             { printf("%d: %s -> %s\n", yylineno, yytext, "COMMA"); chars++; return COMMA; }
 for             { printf("%d: %s -> %s\n", yylineno, yytext, "FOR"); chars++; }
 in              { printf("%d: %s -> %s\n", yylineno, yytext, "IN"); chars++; }
 while           { printf("%d: %s -> %s\n", yylineno, yytext, "WHILE"); chars++; }
