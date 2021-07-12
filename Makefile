@@ -27,5 +27,11 @@ test5: all
 test6: all
 	./a.out < tests/input06.py
 
+test7: all
+	./a.out < scanner/tests/input01.py
+
+testflex: flex
+	gcc scanner.c -lfl
+
 clean:
 	@rm -f *.o *.output scanner.c parser.h parser.c a.out

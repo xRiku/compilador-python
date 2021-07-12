@@ -81,7 +81,7 @@ in              { printf("%d: %s -> %s\n", yylineno, yytext, "IN"); chars++; }
 while           { printf("%d: %s -> %s\n", yylineno, yytext, "WHILE"); chars++; }
 break           { printf("%d: %s -> %s\n", yylineno, yytext, "BREAK"); chars++; }
 continue        { printf("%d: %s -> %s\n", yylineno, yytext, "CONTINUE"); chars++; }
-def             { printf("%d: %s -> %s\n", yylineno, yytext, "DEF"); chars++; }
+def             { printf("%d: %s -> %s\n", yylineno, yytext, "DEF"); chars++; return DEF; }
 pass            { printf("%d: %s -> %s\n", yylineno, yytext, "PASS"); chars++; }
 return          { printf("%d: %s -> %s\n", yylineno, yytext, "RETURN"); chars++; }
 if              { printf("%d: %s -> %s\n", yylineno, yytext, "IF"); chars++; }

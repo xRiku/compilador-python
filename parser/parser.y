@@ -1,10 +1,13 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
+    #define YYERROR_VERBOSE 1
+    extern int yylineno;
     int yylex(void);
     void yyerror(char const *s);
     int yylineno;
 %}
+
 /* Tipos */
 %token NUMBER STRING
 /* Operadores  */
@@ -14,7 +17,7 @@
 /* Símbolos */
 %token LPAR RPAR EQUAL LSQB RSQB COMMA LBRACE RBRACE COLON
 /* Outros */
-%token NAME ENTER
+%token NAME ENTER DEF
 /* Definindo prioridade */
 %left EQEQUAL NOTEQUAL LESS LESSEQUAL GREATER GREATEREQUAL
 %left PLUS MINUS
@@ -28,7 +31,10 @@ lines: lines line | line;
 line: 
       expr ENTER 
     | attr ENTER
-    | dtstrct ENTER;
+    | dtstrct ENTER
+    | def ENTER 
+    | func ENTER
+    | ENTER
 /* Operações com números */
 expr:
       expr PLUS expr
@@ -47,14 +53,14 @@ expr:
     | NAME
     | NUMBER ;
 /* Operações de atribuição */
-attr: NAME EQUAL expr | NAME EQUAL dtstrct;
+attr: NAME EQUAL expr | NAME EQUAL dtstrct | NAME EQUAL func;
 /* Para definir uma lista, não cobre o caso de uma lista com uma variavel */
 types: expr | STRING;
 opt: 
       types COMMA opt 
     | types 
     | %empty ;
-list: LSQB opt RSQB
+list: LSQB opt RSQB;
 /* Para definir um dicionário */
 dict: 
       LBRACE types COLON types RBRACE 
@@ -64,9 +70,23 @@ tuple:
       LPAR types COMMA opt RPAR 
     | LPAR RPAR; 
 dtstrct: list | dict | tuple;
+/* Definição de função */
+args: NAME COMMA args | NAME;
+def: 
+      DEF NAME LPAR args RPAR COLON
+    | DEF NAME LPAR RPAR COLON;
+/* Chamada de função */
+func:
+      NAME LPAR args RPAR
+    | NAME LPAR types RPAR
+    | NAME LPAR RPAR;
 %%
 
 void yyerror (char const *s) {
+    // if_stmt: 
+    //   IF exp-bool COLON lines 
+    // | IF exp-bool COLON lines ELIF exp-bool COLON lines 
+    // | IF exp-bool COLON lines ELIF exp-bool COLON lines ELSE lines; *
     printf("SYNTAX ERROR (%d): %s\n", yylineno, s);
     exit(EXIT_FAILURE);
 }
