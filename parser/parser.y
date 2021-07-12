@@ -56,10 +56,14 @@ opt:
     | %empty ;
 list: LSQB opt RSQB
 /* Para definir um dicionário */
-pr_types: STRING | NUMBER 
-dict: LBRACE pr_types COLON pr_types RBRACE 
+dict: 
+      LBRACE types COLON types RBRACE 
     | LBRACE RBRACE;
-dtstrct: list | dict;
+/* Para definir uma tupla */
+tuple: 
+      LPAR types COMMA opt RPAR 
+    | LPAR RPAR; 
+dtstrct: list | dict | tuple;
 %%
 
 void yyerror (char const *s) {
