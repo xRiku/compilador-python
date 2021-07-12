@@ -9,21 +9,26 @@
 %}
 
 /* Tipos */
-%token NUMBER STRING
+%token NUMBER STRING 
+/* Bool */
+%token TRUE FALSE
 /* Operadores  */
 %token PLUS MINUS STAR OVER DOUBLESTAR 
 /* Operadores lógicos */
-%token EQEQUAL NOTEQUAL LESS LESSEQUAL GREATER GREATEREQUAL
+%token EQEQUAL NOTEQUAL LESS LESSEQUAL GREATER GREATEREQUAL IN
 /* Símbolos */
 %token LPAR RPAR EQUAL LSQB RSQB COMMA LBRACE RBRACE COLON
+/* Estruturas de repetição */
+%token FOR WHILE
 /* Outros */
-%token NAME ENTER DEF
+%token NAME ENTER DEF PASS BREAK CONTINUE RETURN
 /* Definindo prioridade */
 %left EQEQUAL NOTEQUAL LESS LESSEQUAL GREATER GREATEREQUAL
 %left PLUS MINUS
 %left STAR OVER
 %precedence UMINUS
 %right DOUBLESTAR
+
 
 %%
 /* Garante que não para na primeira linha */
@@ -34,7 +39,15 @@ line:
     | dtstrct ENTER
     | def ENTER 
     | func ENTER
-    | ENTER
+    | for ENTER
+    | while ENTER
+    | continue ENTER
+    | break ENTER
+    | pass ENTER
+    | return ENTER
+    | ENTER;
+/* Tipos booleanos */
+bool: TRUE | FALSE;
 /* Operações com números */
 expr:
       expr PLUS expr
@@ -80,6 +93,21 @@ func:
       NAME LPAR args RPAR
     | NAME LPAR types RPAR
     | NAME LPAR RPAR;
+/* Laços de repetição */
+valid_types: list | STRING | NAME;
+for: FOR NAME IN valid_types COLON;
+condition: func | bool;
+while:
+      WHILE expr COLON
+    | WHILE LPAR condition RPAR COLON
+    | WHILE condition COLON;
+/* Outros */
+pass: PASS;
+break: BREAK;
+continue: CONTINUE;
+return: 
+      RETURN types
+    | RETURN bool;
 %%
 
 void yyerror (char const *s) {

@@ -73,20 +73,24 @@ f?{string}      { printf("%d: %s -> %s\n", yylineno, yytext, "STRING"); chars++;
 "{"             { printf("%d: %s -> %s\n", yylineno, yytext, "LBRACE"); chars++; return LBRACE; }
 "}"             { printf("%d: %s -> %s\n", yylineno, yytext, "RBRACE"); chars++; return RBRACE; }
 ":"             { printf("%d: %s -> %s\n", yylineno, yytext, "COLON"); chars++; return COLON; }
-";"             { printf("%d: %s -> %s\n", yylineno, yytext, "SEMI"); chars++; }
+ /* ";"             { printf("%d: %s -> %s\n", yylineno, yytext, "SEMI"); chars++; } */
 ","             { printf("%d: %s -> %s\n", yylineno, yytext, "COMMA"); chars++; return COMMA; }
  /* Palavras reservadas */
-for             { printf("%d: %s -> %s\n", yylineno, yytext, "FOR"); chars++; }
-in              { printf("%d: %s -> %s\n", yylineno, yytext, "IN"); chars++; }
-while           { printf("%d: %s -> %s\n", yylineno, yytext, "WHILE"); chars++; }
-break           { printf("%d: %s -> %s\n", yylineno, yytext, "BREAK"); chars++; }
-continue        { printf("%d: %s -> %s\n", yylineno, yytext, "CONTINUE"); chars++; }
+for             { printf("%d: %s -> %s\n", yylineno, yytext, "FOR"); chars++; return FOR; }
+in              { printf("%d: %s -> %s\n", yylineno, yytext, "IN"); chars++; return IN; }
+while           { printf("%d: %s -> %s\n", yylineno, yytext, "WHILE"); chars++; return WHILE; }
+break           { printf("%d: %s -> %s\n", yylineno, yytext, "BREAK"); chars++; return BREAK; }
+continue        { printf("%d: %s -> %s\n", yylineno, yytext, "CONTINUE"); chars++; return CONTINUE; }
 def             { printf("%d: %s -> %s\n", yylineno, yytext, "DEF"); chars++; return DEF; }
-pass            { printf("%d: %s -> %s\n", yylineno, yytext, "PASS"); chars++; }
-return          { printf("%d: %s -> %s\n", yylineno, yytext, "RETURN"); chars++; }
+pass            { printf("%d: %s -> %s\n", yylineno, yytext, "PASS"); chars++; return PASS; }
+return          { printf("%d: %s -> %s\n", yylineno, yytext, "RETURN"); chars++; return RETURN; }
 if              { printf("%d: %s -> %s\n", yylineno, yytext, "IF"); chars++; }
 elif            { printf("%d: %s -> %s\n", yylineno, yytext, "ELIF"); chars++; }
 else            { printf("%d: %s -> %s\n", yylineno, yytext, "ELSE"); chars++; }
+ /* Booleanos */
+True            { printf("%d: %s -> %s\n", yylineno, yytext, "TRUE"); chars++; return TRUE; }
+False           { printf("%d: %s -> %s\n", yylineno, yytext, "FALSE"); chars++; return FALSE; }
+
  /* Tudo que não for o resto e EOF */
 {name}          { printf("%d: %s -> %s\n", yylineno, yytext, "NAME"); chars++; return NAME;}
 <<EOF>>         { process_indent(""); printf("%d: %s -> %s\n", yylineno, "EOF", "ENDMARKER"); return 0; }

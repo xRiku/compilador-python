@@ -1,7 +1,7 @@
 all: bison flex gcc
 
 bison: parser/parser.y
-	bison -Wall --defines=parser.h -o parser.c parser/parser.y
+	bison -v -Wall --defines=parser.h -o parser.c parser/parser.y
 
 flex: scanner/scanner.l
 	flex scanner/scanner.l 
@@ -28,6 +28,12 @@ test6: all
 	./a.out < tests/input06.py
 
 test7: all
+	./a.out < tests/input07.py
+
+test8: all
+	./a.out < tests/input08.py
+
+testscanner: all
 	./a.out < scanner/tests/input01.py
 
 testflex: flex
