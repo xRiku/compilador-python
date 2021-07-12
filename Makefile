@@ -21,5 +21,8 @@ test3: all
 test4: all
 	./a.out < tests/input04.py
 
+test5: all
+	./a.out < tests/input05.py
+
 clean:
 	@rm -f *.o *.output scanner.c parser.h parser.c a.out

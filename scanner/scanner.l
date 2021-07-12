@@ -9,6 +9,7 @@
 
 
 int lines = 0, chars = 0;
+FILE *flex_log = NULL;
 
 int open_parentheses = 0 ;
 unsigned int indent_stack[MAX_DEPTH] ;
@@ -69,9 +70,9 @@ f?{string}      { printf("%d: %s -> %s\n", yylineno, yytext, "STRING"); chars++;
 ")"             { printf("%d: %s -> %s\n", yylineno, yytext, "RPAR"); chars++; open_parentheses--; return RPAR; }
 "["             { printf("%d: %s -> %s\n", yylineno, yytext, "LSQB"); chars++; return LSQB; }
 "]"             { printf("%d: %s -> %s\n", yylineno, yytext, "RSQB"); chars++; return RSQB; }
-"{"             { printf("%d: %s -> %s\n", yylineno, yytext, "LBRACE"); chars++; }
-"}"             { printf("%d: %s -> %s\n", yylineno, yytext, "RBRACE"); chars++; }
-":"             { printf("%d: %s -> %s\n", yylineno, yytext, "COLON"); chars++; }
+"{"             { printf("%d: %s -> %s\n", yylineno, yytext, "LBRACE"); chars++; return LBRACE; }
+"}"             { printf("%d: %s -> %s\n", yylineno, yytext, "RBRACE"); chars++; return RBRACE; }
+":"             { printf("%d: %s -> %s\n", yylineno, yytext, "COLON"); chars++; return COLON; }
 ";"             { printf("%d: %s -> %s\n", yylineno, yytext, "SEMI"); chars++; }
 ","             { printf("%d: %s -> %s\n", yylineno, yytext, "COMMA"); chars++; return COMMA; }
  /* Palavras reservadas */

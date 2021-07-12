@@ -12,7 +12,7 @@
 /* Operadores lógicos */
 %token EQEQUAL NOTEQUAL LESS LESSEQUAL GREATER GREATEREQUAL
 /* Símbolos */
-%token LPAR RPAR EQUAL LSQB RSQB COMMA
+%token LPAR RPAR EQUAL LSQB RSQB COMMA LBRACE RBRACE COLON
 /* Outros */
 %token NAME ENTER
 /* Definindo prioridade */
@@ -27,7 +27,8 @@
 lines: lines line | line;
 line: 
       expr ENTER 
-    | attr ENTER;
+    | attr ENTER
+    | dtstrct ENTER;
 /* Operações com números */
 expr:
       expr PLUS expr
@@ -48,9 +49,17 @@ expr:
 /* Operações de atribuição */
 attr: NAME EQUAL expr | NAME EQUAL dtstrct;
 /* Para definir uma lista, não cobre o caso de uma lista com uma variavel */
-types: NUMBER | STRING;
-opt: types COMMA opt | types | %empty ;
-dtstrct: LSQB opt RSQB;
+types: expr | STRING;
+opt: 
+      types COMMA opt 
+    | types 
+    | %empty ;
+list: LSQB opt RSQB
+/* Para definir um dicionário */
+pr_types: STRING | NUMBER 
+dict: LBRACE pr_types COLON pr_types RBRACE 
+    | LBRACE RBRACE;
+dtstrct: list | dict;
 %%
 
 void yyerror (char const *s) {
