@@ -5,7 +5,17 @@
     void yyerror(char const *s);
     int yylineno;
 %}
-%token NUMBER LPAR RPAR PLUS MINUS STAR OVER DOUBLESTAR ENTER NAME EQUAL LSQB RSQB COMMA STRING
+/* Tipos */
+%token NUMBER STRING
+/* Operadores  */
+%token PLUS MINUS STAR OVER DOUBLESTAR 
+/* Operadores lógicos */
+%token EQEQUAL NOTEQUAL LESS LESSEQUAL GREATER GREATEREQUAL
+/* Símbolos */
+%token LPAR RPAR EQUAL LSQB RSQB COMMA
+/* Outros */
+%token NAME ENTER
+/* Definindo prioridade */
 %left PLUS MINUS
 %left STAR OVER
 %precedence UMINUS
@@ -16,7 +26,7 @@ lines: lines line | line;
 line: 
       expr ENTER 
     | attr ENTER;
-/* Possíveis operações */
+/* Operações com números */
 expr:
       expr PLUS expr
     | expr MINUS expr
@@ -24,6 +34,12 @@ expr:
     | expr OVER expr
     | MINUS expr %prec UMINUS
     | expr DOUBLESTAR expr
+    | expr NOTEQUAL expr
+    | expr EQEQUAL expr
+    | expr LESS expr
+    | expr LESSEQUAL expr
+    | expr GREATER expr
+    | expr GREATEREQUAL expr
     | LPAR expr RPAR
     | NAME
     | NUMBER ;

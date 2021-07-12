@@ -50,18 +50,21 @@ string \"[^\"]*\"|\'[^\']*\'
 [ ]             {chars++;}
 {number}        { printf("%d: %s -> %s\n", yylineno, yytext, "NUMBER"); chars++; return NUMBER; }
 f?{string}      { printf("%d: %s -> %s\n", yylineno, yytext, "STRING"); chars++; return STRING; }
+ /* Operadores convencionais */
 "+"             { printf("%d: %s -> %s\n", yylineno, yytext, "PLUS"); chars++; return PLUS; }
 "-"             { printf("%d: %s -> %s\n", yylineno, yytext, "MINUS"); chars++; return MINUS; }
 "**"            { printf("%d: %s -> %s\n", yylineno, yytext, "DOUBLESTAR"); chars++; return DOUBLESTAR; }
 "*"             { printf("%d: %s -> %s\n", yylineno, yytext, "STAR"); chars++; return STAR;}
 "/"             { printf("%d: %s -> %s\n", yylineno, yytext, "SLASH"); chars++; return OVER;}
-"=="            { printf("%d: %s -> %s\n", yylineno, yytext, "EQEQUAL"); chars++; }
-"="             { printf("%d: %s -> %s\n", yylineno, yytext, "EQUAL"); chars++; return EQUAL;}
-"!="            { printf("%d: %s -> %s\n", yylineno, yytext, "NOTEQUAL"); chars++; }
-"<"             { printf("%d: %s -> %s\n", yylineno, yytext, "LESS"); chars++; }
-"<="            { printf("%d: %s -> %s\n", yylineno, yytext, "LESSEQUAL"); chars++; }
-">"             { printf("%d: %s -> %s\n", yylineno, yytext, "GREATER"); chars++; }
-">="            { printf("%d: %s -> %s\n", yylineno, yytext, "GREATEREQUAL"); chars++; }
+ /* Operadores lógicos */
+"=="            { printf("%d: %s -> %s\n", yylineno, yytext, "EQEQUAL"); chars++; return EQEQUAL; }
+"="             { printf("%d: %s -> %s\n", yylineno, yytext, "EQUAL"); chars++; return EQUAL; }
+"!="            { printf("%d: %s -> %s\n", yylineno, yytext, "NOTEQUAL"); chars++; return NOTEQUAL; }
+"<"             { printf("%d: %s -> %s\n", yylineno, yytext, "LESS"); chars++; return LESS; }
+"<="            { printf("%d: %s -> %s\n", yylineno, yytext, "LESSEQUAL"); chars++; return LESSEQUAL; }
+">"             { printf("%d: %s -> %s\n", yylineno, yytext, "GREATER"); chars++; return GREATER; }
+">="            { printf("%d: %s -> %s\n", yylineno, yytext, "GREATEREQUAL"); chars++; return GREATEREQUAL; }
+ /* Símbolos */
 "("             { printf("%d: %s -> %s\n", yylineno, yytext, "LPAR"); chars++; open_parentheses++; return LPAR; }
 ")"             { printf("%d: %s -> %s\n", yylineno, yytext, "RPAR"); chars++; open_parentheses--; return RPAR; }
 "["             { printf("%d: %s -> %s\n", yylineno, yytext, "LSQB"); chars++; return LSQB; }
@@ -71,6 +74,7 @@ f?{string}      { printf("%d: %s -> %s\n", yylineno, yytext, "STRING"); chars++;
 ":"             { printf("%d: %s -> %s\n", yylineno, yytext, "COLON"); chars++; }
 ";"             { printf("%d: %s -> %s\n", yylineno, yytext, "SEMI"); chars++; }
 ","             { printf("%d: %s -> %s\n", yylineno, yytext, "COMMA"); chars++; return COMMA; }
+ /* Palavras reservadas */
 for             { printf("%d: %s -> %s\n", yylineno, yytext, "FOR"); chars++; }
 in              { printf("%d: %s -> %s\n", yylineno, yytext, "IN"); chars++; }
 while           { printf("%d: %s -> %s\n", yylineno, yytext, "WHILE"); chars++; }
@@ -82,11 +86,12 @@ return          { printf("%d: %s -> %s\n", yylineno, yytext, "RETURN"); chars++;
 if              { printf("%d: %s -> %s\n", yylineno, yytext, "IF"); chars++; }
 elif            { printf("%d: %s -> %s\n", yylineno, yytext, "ELIF"); chars++; }
 else            { printf("%d: %s -> %s\n", yylineno, yytext, "ELSE"); chars++; }
+ /* Tudo que não for o resto e EOF */
 {name}          { printf("%d: %s -> %s\n", yylineno, yytext, "NAME"); chars++; return NAME;}
 <<EOF>>         { process_indent(""); printf("%d: %s -> %s\n", yylineno, "EOF", "ENDMARKER"); return 0; }
 
 %%
-
+ /* Série de funções para auxiliar no reconhecimento de indent e dedent */
 unsigned int white_count(char* line) {
   unsigned int count = 0 ;
   while (*line == ' ')
