@@ -1,43 +1,46 @@
-all: bison flex gcc
+# Modifique as variaveis conforme o seu setup.
 
-bison: parser/parser.y
-	bison -v -Wall --defines=parser.h -o parser.c parser/parser.y
+JAVA=java
+JAVAC=javac
 
-flex: scanner/scanner.l
-	flex scanner/scanner.l 
+# Eu uso ROOT como o diretório raiz para os meus labs.
 
-gcc: scanner.c parser.c
-	gcc -Wall scanner.c parser.c -ly
+ROOT=/home/philipe/compiladores
 
-test1: all
-	./a.out < tests/input01.py
+ANTLR_PATH=/usr/local/lib/antlr-4.9.2-complete.jar
 
-test2: all
-	./a.out < tests/input02.py
+# Diretório para aonde vão os arquivos gerados pelo ANTLR.
+GEN_PATH=parser
 
-test3: all
-	./a.out < tests/input03.py
+# Diretório para os arquivos .class
+BIN_PATH=bin
 
-test4: all
-	./a.out < tests/input04.py
+CLASS_PATH_OPTION=-cp .:$(ANTLR_PATH):$(BIN_PATH)
 
-test5: all
-	./a.out < tests/input05.py
+# Comandos como descritos na página do ANTLR.
+ANTLR4=$(JAVA) -jar $(ANTLR_PATH)
+GRUN=$(JAVA) $(CLASS_PATH_OPTION) org.antlr.v4.gui.TestRig
 
-test6: all
-	./a.out < tests/input06.py
+# Diretório para os casos de teste
+DATA=$(ROOT)/tests
+IN=$(DATA)/in
 
-test7: all
-	./a.out < tests/input07.py
+all: antlr javac
+	@echo "Done."
 
-test8: all
-	./a.out < tests/input08.py
+antlr: Python3Lexer.g4 Python3Parser.g4
+	$(ANTLR4) -visitor -o $(GEN_PATH) Python3Lexer.g4 Python3Parser.g4
 
-testscanner: all
-	./a.out < scanner/tests/input01.py
+# Compila todos os subdiretórios e joga todos os .class em BIN_PATH pra organizar.
+javac:
+	rm -f $(BIN_PATH)
+	mkdir $(BIN_PATH)
+	$(JAVAC) $(CLASS_PATH_OPTION) -d $(BIN_PATH) */*.java
 
-testflex: flex
-	gcc scanner.c -lfl
+# 'Python3' é o prefixo comum das duas gramáticas (Python3Lexer e Python3Parser).
+# 'file_input' é a regra inicial de Python3Parser.
+run:
+	$(GRUN) Python3 file_input $(FILE)
 
 clean:
-	@rm -f *.o *.output scanner.c parser.h parser.c a.out
+	@rm -rf $(GEN_PATH) $(BIN_PATH)

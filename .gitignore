@@ -1,4 +1,2 @@
-a.out
-parser.c
-parser.h
-scanner.c
+parser/
+bin/
