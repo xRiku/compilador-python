@@ -4,7 +4,4 @@ def teste7():
         print(name)
     for i in [1,2,3]:
         print(name)
-    return True 
-    def 23():
-        x = [lambda x: x*35]
-        return x
+    retrun True 

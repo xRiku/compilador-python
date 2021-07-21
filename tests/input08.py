@@ -1,11 +1,7 @@
-except:
-    nLinhas = 1000
-    nCampos = 10
-raise:
-    if x == 2:
-        def lambda x: x:
-            print([i*2 for i in range(0,5)])
-authors = dict()
-authors[0] = 'João'
-authors[0] = 'Philipe'
-authors[0] = 'Vitor'
+def soma2(y):
+    y = lambda (x : x+2)
+    resposta = y(2)
+    return y
+
+meuitem = 3
+meuitem == soma2(meuitem)
