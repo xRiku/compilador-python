@@ -1,5 +1,4 @@
-def say_hello():
-    print("Hello, World!")
+a = "teste"
 
-y = say_hello()
-say_hello()
+if a = 2:
+    print(a)

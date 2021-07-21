@@ -33,7 +33,7 @@ antlr: Python3Lexer.g4 Python3Parser.g4
 
 # Compila todos os subdiretórios e joga todos os .class em BIN_PATH pra organizar.
 javac:
-	rm -f $(BIN_PATH)
+	rm -rf $(BIN_PATH)
 	mkdir $(BIN_PATH)
 	$(JAVAC) $(CLASS_PATH_OPTION) -d $(BIN_PATH) */*.java
 
@@ -41,6 +41,12 @@ javac:
 # 'file_input' é a regra inicial de Python3Parser.
 run:
 	$(GRUN) Python3 file_input $(FILE)
+
+runall:
+	-for FILE in ${PWD}/tests/*.py; do \
+	 	echo -e "\nRunning $${FILE}" &&\
+	 	$(GRUN) Python3 file_input < $${FILE} ;\
+	done;
 
 clean:
 	@rm -rf $(GEN_PATH) $(BIN_PATH)

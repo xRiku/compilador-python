@@ -1,3 +1,12 @@
-x = 3
-y = 12
-x = 4 + y
+def times_2(array):
+    new_array = [i*2 for i in array] 
+    return new_array
+
+
+
+if __name__ == "__main__":
+    x = [1,2,3,4,5]
+    y = [i*2 for i in x]
+    imprimir = lambda x: print(x)
+    print(f'The final sum is: {sum(y)}')
+    imprimir(x)
