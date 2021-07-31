@@ -30,6 +30,7 @@ all: antlr javac
 
 antlr: Python3Lexer.g4 Python3Parser.g4
 	$(ANTLR4) -visitor -o $(GEN_PATH) Python3Lexer.g4 Python3Parser.g4
+	cp Python3LexerBase.java $(GEN_PATH)
 
 # Compila todos os subdiretórios e joga todos os .class em BIN_PATH pra organizar.
 javac:
@@ -40,12 +41,12 @@ javac:
 # 'Python3' é o prefixo comum das duas gramáticas (Python3Lexer e Python3Parser).
 # 'file_input' é a regra inicial de Python3Parser.
 run:
-	$(GRUN) Python3 file_input $(FILE)
+	$(GRUN) $(GEN_PATH).Python3 file_input $(FILE)
 
 runall:
 	-for FILE in ${PWD}/tests/*.py; do \
 	 	echo -e "\nRunning $${FILE}" &&\
-	 	$(GRUN) Python3 file_input < $${FILE} ;\
+	 	$(GRUN) $(GEN_PATH).Python3 file_input < $${FILE} ;\
 	done;
 
 clean:

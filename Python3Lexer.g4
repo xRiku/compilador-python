@@ -30,6 +30,10 @@
  */
 lexer grammar Python3Lexer;
 
+@header {
+    package parser;
+}
+
 // All comments that start with "///" are copy-pasted from
 // The Python Language Reference
 
@@ -38,6 +42,7 @@ tokens { INDENT, DEDENT }
 options {
     superClass=Python3LexerBase;
 }
+
 
 /*
  * lexer rules
