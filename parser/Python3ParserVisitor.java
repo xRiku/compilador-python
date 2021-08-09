@@ -109,12 +109,11 @@ public interface Python3ParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSmall_stmt(Python3Parser.Small_stmtContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code assign}
-	 * labeled alternative in {@link Python3Parser#expr_stmt}.
+	 * Visit a parse tree produced by {@link Python3Parser#expr_stmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAssign(Python3Parser.AssignContext ctx);
+	T visitExpr_stmt(Python3Parser.Expr_stmtContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Python3Parser#annassign}.
 	 * @param ctx the parse tree

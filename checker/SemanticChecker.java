@@ -9,7 +9,9 @@ import parser.Python3Parser;
 // import parser.Python3Parser.Read_stmtContext;
 import parser.Python3ParserBaseVisitor;
 // import parser.Python3Parser.testlistStarExpr;
-// import parser.Python3Parser.assign;
+import parser.Python3Parser.Expr_stmtContext;
+import parser.Python3Parser.AtomContext;
+import org.antlr.v4.gui.TestRig;
 import tables.StrTable;
 import tables.VarTable;
 import typing.Type;
@@ -91,81 +93,28 @@ public class SemanticChecker extends Python3ParserBaseVisitor<Void> {
     	System.out.print("\n\n");
     }
     
-    // Visita a regra type_spec: BOOL
-    // Note que esse método só foi criado pelo ANTLR porque a regra da
-    // linha 29 de Python3Parser.g foi marcada com o identificador # boolType.
-    // O mesmo vale para as demais regras de type_spec.
+	/* Visita a regra expr_stmt: testlist_star_expr (annassign 
+          | augassign (yield_expr|testlist)
+          |('=' (yield_expr|testlist_star_expr))*) */
     // @Override
-    // public Void visitBoolType(Python3Parser.BoolTypeContext ctx) {
-    // 	this.lastDeclType = Type.BOOL_TYPE;
-    // 	return null; // Java says must return something even when Void
-    // }
-	
-    // Visita a regra type_spec: INT
-	// @Override
-	// public Void visitIntType(Python3Parser.IntTypeContext ctx) {
-	// 	this.lastDeclType = Type.INT_TYPE;
-	// 	return null; // Java says must return something even when Void
-	// }
-	
-	// Visita a regra type_spec: REAL
-	// @Override
-	// public Void visitRealType(Python3Parser.RealTypeContext ctx) {
-	// 	this.lastDeclType = Type.REAL_TYPE;
-	// 	return null; // Java says must return something even when Void
-    // }
-	
-	// Visita a regra type_spec: STRING
-	// @Override
-	// public Void visitStrType(Python3Parser.StrTypeContext ctx) {
-	// 	this.lastDeclType = Type.STR_TYPE;
-	// 	return null; // Java says must return something even when Void
-	// }
-    
-    // Visita a regra var_decl: type_spec ID SEMI
-    // @Override
-    // public Void visitVar_decl(Python3Parser.Var_declContext ctx) {
+    // public Void visitExpr_stmt(Python3Parser.Expr_stmtContext ctx) {
     // 	// Visita a declaração de tipo para definir a variável lastDeclType.
-    // 	visit(ctx.type_spec());
+    // 	// visit(ctx.testlist_star_expr());
+    //     // System.out.println(ctx.NUMBER().getSymbol());
     // 	// Agora testa se a variável foi redeclarada.
-    // 	newVar(ctx.ID().getSymbol());
     // 	return null; // Java says must return something even when Void
     // }
 
-    // Visita a regra assign_stmt: ID ASSIGN expr SEMI
-	// @Override
-	// public Void visitAssign_stmt(Assign_stmtContext ctx) {
-	// 	// Visita recursivamente a expressão da direita para procurar erros. 
-	// 	visit(ctx.expr());
-	// 	// Verifica se a variável a ser atribuída foi declarada.
-	// 	checkVar(ctx.ID().getSymbol());
-	// 	return null; // Java says must return something even when Void
-	// }
+    // @Override
+    // public Void visitAtom(Python3Parser.AtomContext ctx) {
+    	// Visita a declaração de tipo para definir a variável lastDeclType.
+		// this.lastDeclType = Type.INT_TYPE;
+        // System.out.println(ctx.NUMBER().getSymbol());
+		// checkVar(ctx.NAME().getSymbol());
+		// checkVar(ctx.STRING().getSymbol());
+    	// Agora testa se a variável foi redeclarada.
+    	// return null; // Java says must return something even when Void
+    // }
 
-	// Visita a regra read_stmt: READ ID SEMI
-	// @Override
-	// public Void visitRead_stmt(Read_stmtContext ctx) {
-	// 	// Verifica se a variável que vai receber o valor lido foi declarada.
-	// 	checkVar(ctx.ID().getSymbol());
-	// 	return null; // Java says must return something even when Void
-	// }
-
-	// @Override
-	// // Visita a regra expr: STR_VAL
-	// // Valem os mesmos comentários do método visitBoolType.
-	// public Void visitExprStrVal(ExprStrValContext ctx) {
-	// 	// Adiciona a string na tabela de strings.
-	// 	st.add(ctx.STR_VAL().getText());
-	// 	return null; // Java says must return something even when Void
-	// }
-
-	// @Override
-	// // Visita a regra expr: ID
-	// // Valem os mesmos comentários do método visitBoolType.
-	// public Void visitExprId(ExprIdContext ctx) {
-	// 	// Verifica se a variável usada na expressão foi declarada.
-	// 	checkVar(ctx.ID().getSymbol());
-	// 	return null; // Java says must return something even when Void
-	// }
 	
 }

@@ -1932,17 +1932,6 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class Expr_stmtContext extends ParserRuleContext {
-		public Expr_stmtContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_expr_stmt; }
-	 
-		public Expr_stmtContext() { }
-		public void copyFrom(Expr_stmtContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class AssignContext extends Expr_stmtContext {
 		public List<Testlist_star_exprContext> testlist_star_expr() {
 			return getRuleContexts(Testlist_star_exprContext.class);
 		}
@@ -1968,18 +1957,21 @@ public class Python3Parser extends Parser {
 		public TerminalNode ASSIGN(int i) {
 			return getToken(Python3Parser.ASSIGN, i);
 		}
-		public AssignContext(Expr_stmtContext ctx) { copyFrom(ctx); }
+		public Expr_stmtContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_expr_stmt; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof Python3ParserListener ) ((Python3ParserListener)listener).enterAssign(this);
+			if ( listener instanceof Python3ParserListener ) ((Python3ParserListener)listener).enterExpr_stmt(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Python3ParserListener ) ((Python3ParserListener)listener).exitAssign(this);
+			if ( listener instanceof Python3ParserListener ) ((Python3ParserListener)listener).exitExpr_stmt(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof Python3ParserVisitor ) return ((Python3ParserVisitor<? extends T>)visitor).visitAssign(this);
+			if ( visitor instanceof Python3ParserVisitor ) return ((Python3ParserVisitor<? extends T>)visitor).visitExpr_stmt(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1989,7 +1981,6 @@ public class Python3Parser extends Parser {
 		enterRule(_localctx, 32, RULE_expr_stmt);
 		int _la;
 		try {
-			_localctx = new AssignContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(438);

@@ -210,13 +210,13 @@ public class Python3ParserBaseListener implements Python3ParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAssign(Python3Parser.AssignContext ctx) { }
+	@Override public void enterExpr_stmt(Python3Parser.Expr_stmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAssign(Python3Parser.AssignContext ctx) { }
+	@Override public void exitExpr_stmt(Python3Parser.Expr_stmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

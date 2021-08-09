@@ -2,10 +2,14 @@ package checker;
 
 import java.io.IOException;
 
+import java.util.Arrays;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.gui.TreeViewer;
+
+
 
 import parser.Python3Lexer;
 import parser.Python3Parser;
@@ -46,7 +50,15 @@ public class Main {
 
 		// Começa o processo de parsing na regra 'program'.
 		// ParseTree tree = parser.program();
-		ParseTree tree = parser.file_input();
+		ParseTree tree = parser.file_input();		
+		// ParseTree tree = parser.lexpr();
+		System.out.println(tree.toStringTree(parser));
+		// TestRig testRig = new TestRig();
+		// TestRig.process(lexer,parser);
+
+		TreeViewer viewr = new TreeViewer(Arrays.asList(
+                 parser.getRuleNames()),tree);
+        viewr.open();
 
 		if (parser.getNumberOfSyntaxErrors() != 0) {
 			// Houve algum erro sintático. Termina a compilação aqui.
@@ -55,14 +67,23 @@ public class Main {
 
 		// Cria o analisador semântico e visita a ParseTree para
 		// fazer a análise.
+		
 		SemanticChecker checker = new SemanticChecker();
 		checker.visit(tree);
 
 		// Saída final.
-		if (checker.hasPassed()) {
+		
+		if (checker.hasPassed()) {			
 			System.out.println("PARSE SUCCESSFUL!");
 			checker.printTables();
 		}
 	}
 
 }
+
+
+// public class Mylistener extends gramBaseListener {
+// 	@Override public void enterEveryRule(ParserRuleContext ctx) {  //see gramBaseListener for allowed functions
+// 		System.out.println("rule entered: " + ctx.getText());      //code that executes per rule
+// 	}
+// }

@@ -25,6 +25,8 @@ GRUN=$(JAVA) $(CLASS_PATH_OPTION) org.antlr.v4.gui.TestRig
 DATA=$(ROOT)/tests
 IN=$(DATA)/in
 
+MAIN_PATH=checker
+
 all: antlr javac
 	@echo "Done."
 
@@ -41,13 +43,14 @@ javac:
 # 'Python3' é o prefixo comum das duas gramáticas (Python3Lexer e Python3Parser).
 # 'file_input' é a regra inicial de Python3Parser.
 run:
-	$(GRUN) $(GEN_PATH).Python3 file_input $(FILE)
+	$(JAVA) $(CLASS_PATH_OPTION):$(BIN_PATH) $(MAIN_PATH)/Main $(FILE)
 
 runall:
-	-for FILE in ${PWD}/tests/*.py; do \
-	 	echo -e "\nRunning $${FILE}" &&\
-	 	$(GRUN) $(GEN_PATH).Python3 file_input < $${FILE} ;\
+	-for FILE in $(IN)/*.ezl; do \
+	 	echo -e "\nRunning $${FILE}" && \
+	 	$(JAVA) $(CLASS_PATH_OPTION):$(BIN_PATH) $(MAIN_PATH)/Main $${FILE}; \
 	done;
+
 
 clean:
 	@rm -rf $(GEN_PATH) $(BIN_PATH)
