@@ -170,6 +170,16 @@ public interface Python3ParserListener extends ParseTreeListener {
 	 */
 	void exitSmall_stmt(Python3Parser.Small_stmtContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Python3Parser#assign_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssign_stmt(Python3Parser.Assign_stmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Python3Parser#assign_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssign_stmt(Python3Parser.Assign_stmtContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Python3Parser#expr_stmt}.
 	 * @param ctx the parse tree
 	 */
@@ -190,17 +200,15 @@ public interface Python3ParserListener extends ParseTreeListener {
 	 */
 	void exitAnnassign(Python3Parser.AnnassignContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code testlistStarExpr}
-	 * labeled alternative in {@link Python3Parser#testlist_star_expr}.
+	 * Enter a parse tree produced by {@link Python3Parser#testlist_star_expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterTestlistStarExpr(Python3Parser.TestlistStarExprContext ctx);
+	void enterTestlist_star_expr(Python3Parser.Testlist_star_exprContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code testlistStarExpr}
-	 * labeled alternative in {@link Python3Parser#testlist_star_expr}.
+	 * Exit a parse tree produced by {@link Python3Parser#testlist_star_expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitTestlistStarExpr(Python3Parser.TestlistStarExprContext ctx);
+	void exitTestlist_star_expr(Python3Parser.Testlist_star_exprContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Python3Parser#augassign}.
 	 * @param ctx the parse tree

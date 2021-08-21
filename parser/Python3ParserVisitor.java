@@ -109,6 +109,12 @@ public interface Python3ParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSmall_stmt(Python3Parser.Small_stmtContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Python3Parser#assign_stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssign_stmt(Python3Parser.Assign_stmtContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Python3Parser#expr_stmt}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -121,12 +127,11 @@ public interface Python3ParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAnnassign(Python3Parser.AnnassignContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code testlistStarExpr}
-	 * labeled alternative in {@link Python3Parser#testlist_star_expr}.
+	 * Visit a parse tree produced by {@link Python3Parser#testlist_star_expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTestlistStarExpr(Python3Parser.TestlistStarExprContext ctx);
+	T visitTestlist_star_expr(Python3Parser.Testlist_star_exprContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Python3Parser#augassign}.
 	 * @param ctx the parse tree

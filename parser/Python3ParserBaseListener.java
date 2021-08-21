@@ -210,6 +210,18 @@ public class Python3ParserBaseListener implements Python3ParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterAssign_stmt(Python3Parser.Assign_stmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAssign_stmt(Python3Parser.Assign_stmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExpr_stmt(Python3Parser.Expr_stmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -234,13 +246,13 @@ public class Python3ParserBaseListener implements Python3ParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTestlistStarExpr(Python3Parser.TestlistStarExprContext ctx) { }
+	@Override public void enterTestlist_star_expr(Python3Parser.Testlist_star_exprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTestlistStarExpr(Python3Parser.TestlistStarExprContext ctx) { }
+	@Override public void exitTestlist_star_expr(Python3Parser.Testlist_star_exprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

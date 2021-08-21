@@ -53,9 +53,9 @@ public class Main {
 		// TestRig testRig = new TestRig();
 		// TestRig.process(lexer,parser);
 
-		// TreeViewer viewr = new TreeViewer(Arrays.asList(
-        //          parser.getRuleNames()),tree);
-        // viewr.open();
+		TreeViewer viewr = new TreeViewer(Arrays.asList(
+                 parser.getRuleNames()),tree);
+        viewr.open();
 
 		if (parser.getNumberOfSyntaxErrors() != 0) {
 			// Houve algum erro sintático. Termina a compilação aqui.
