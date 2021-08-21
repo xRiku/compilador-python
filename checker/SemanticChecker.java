@@ -118,13 +118,6 @@ public class SemanticChecker extends Python3ParserBaseVisitor<Void> {
         idx = vt.addVar(text, line, var_type);
         // return new AST(VAR_DECL_NODE, idx, lastDeclType);
     }
-
-    boolean varExists() {
-        String text = leftvar.getText();
-   		int idx = vt.lookupVar(text);
-        return idx == -1 ? false : true;
-    }
-    
     
     // Retorna true se os testes passaram.
     boolean hasPassed() {
@@ -196,14 +189,19 @@ public class SemanticChecker extends Python3ParserBaseVisitor<Void> {
 
     @Override
     public Void visitAtomNumber(Python3Parser.AtomNumberContext ctx) {
+        Type localtype = Type.REAL_TYPE;
     	// Visita a declaração de tipo para definir a variável lastDeclType.
 		// this.lastDeclType = Type.INT_TYPE;
         // this.lastDeclType = Type.REAL_TYPE;
         // System.out.println("DEU");
         if (assignment) {
-            if (!varExists()) {
-                newVar(Type.REAL_TYPE);
-            } 
+            String text = leftvar.getText();
+   		    int idx = vt.lookupVar(text);
+            if (idx == -1) {
+                newVar(localtype);
+            } else {
+                vt.setType(idx, localtype);
+            }
             assignment = false;
         }
 
@@ -237,9 +235,15 @@ public class SemanticChecker extends Python3ParserBaseVisitor<Void> {
 		// this.lastDeclType = Type.INT_TYPE;
         // System.out.println(ctx.STRING());
         st.add(ctx.STRING().toString().substring(1,ctx.STRING().toString().length()-1));
-        // this.lastDeclType = Type.STR_TYPE;
+        Type localtype = Type.STR_TYPE;
         if (assignment) {
-            newVar(Type.STR_TYPE);
+            String text = leftvar.getText();
+   		    int idx = vt.lookupVar(text);
+            if (idx == -1) {
+                newVar(localtype);
+            } else {
+                vt.setType(idx, localtype);
+            }
             assignment = false;
         }
 
