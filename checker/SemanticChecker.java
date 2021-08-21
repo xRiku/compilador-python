@@ -33,6 +33,7 @@ import parser.Python3Parser;
 import parser.Python3ParserBaseVisitor;
 // import parser.Python3Parser.testlistStarExpr;
 import parser.Python3Parser.Expr_stmtContext;
+import parser.Python3Parser.Comp_opContext;
 import parser.Python3Parser.StmtContext;
 import parser.Python3Parser.Small_stmtContext;
 import parser.Python3Parser.Assign_stmtContext;
@@ -83,6 +84,8 @@ public class SemanticChecker extends Python3ParserBaseVisitor<Void> {
     private Token leftvar;
 
     private boolean assignment = false;
+
+    private boolean comparison = false;
     
     private boolean passed = true;
 
@@ -91,13 +94,13 @@ public class SemanticChecker extends Python3ParserBaseVisitor<Void> {
     	String text = token.getText();
     	int line = token.getLine();
    		int idx = vt.lookupVar(text);
-        // if (idx == -1) {
-    	// 	System.err.printf(
-    	// 		"SEMANTIC ERROR (%d): variable '%s' was not declared.\n",
-		// 		line, text);
-    	// 	passed = false;
-        //     return;
-        // }
+        if (idx == -1) {
+    		System.err.printf(
+    			"SEMANTIC ERROR (%d): variable '%s' was not declared.\n",
+				line, text);
+    		passed = false;
+            return;
+        }
         // if (idx == -1) {            
         //     vt.addVar(text, line, lastDeclType);
         // }
@@ -137,10 +140,20 @@ public class SemanticChecker extends Python3ParserBaseVisitor<Void> {
     @Override
 	public Void visitStmt(Python3Parser.StmtContext ctx) {
     	leftmostvar = true;
+        assignment = false;
         visit(ctx.simple_stmt());         
     	return null; // Java says must return something even when Void
     }
 
+    @Override
+    public Void visitComp_op(Python3Parser.Comp_opContext ctx) {
+
+        String text = leftvar.getText();
+        int idx = vt.lookupVar(text);
+        vt.setType(idx, Type.BOOL_TYPE);
+        return null; // Java says must return something even when Void
+    }    
+        
     @Override
 	public Void visitSmall_stmt(Python3Parser.Small_stmtContext ctx) {
     	// Visita a declaração de tipo para definir a variável lastDeclType.
@@ -162,22 +175,22 @@ public class SemanticChecker extends Python3ParserBaseVisitor<Void> {
     @Override
     public Void visitAtomNumber(Python3Parser.AtomNumberContext ctx) {
         Type localtype = Type.REAL_TYPE;
+        System.out.println(ctx.NUMBER().getSymbol().getText());
         try {
             double x = Integer.parseInt(ctx.NUMBER().getSymbol().getText());
             localtype = Type.INT_TYPE;
         } catch (NumberFormatException nfe) {
             localtype = Type.REAL_TYPE;
         }
-    	
-        if (assignment) {
+    	if (assignment) {
             String text = leftvar.getText();
    		    int idx = vt.lookupVar(text);
             if (idx == -1) {
                 newVar(localtype);
             } else {
+                if (vt.getType(idx) == Type.REAL_TYPE) return null;
                 vt.setType(idx, localtype);
             }
-            assignment = false;
         }
 		return null; // Java says must return something even when Void
     }
@@ -192,6 +205,8 @@ public class SemanticChecker extends Python3ParserBaseVisitor<Void> {
             leftvar = ctx.NAME().getSymbol();
             leftmostvar = false;
             // newVar(ctx.NAME().getSymbol());
+        } else {
+            checkVar(ctx.NAME().getSymbol());
         }
         // System.out.println(ctx.NAME().getSymbol());
 		// checkVar(ctx.NAME().getSymbol());
