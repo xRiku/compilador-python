@@ -692,15 +692,65 @@ public interface Python3ParserListener extends ParseTreeListener {
 	 */
 	void exitAtom_expr(Python3Parser.Atom_exprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Python3Parser#atom}.
+	 * Enter a parse tree produced by the {@code atomOther}
+	 * labeled alternative in {@link Python3Parser#atom}.
 	 * @param ctx the parse tree
 	 */
-	void enterAtom(Python3Parser.AtomContext ctx);
+	void enterAtomOther(Python3Parser.AtomOtherContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link Python3Parser#atom}.
+	 * Exit a parse tree produced by the {@code atomOther}
+	 * labeled alternative in {@link Python3Parser#atom}.
 	 * @param ctx the parse tree
 	 */
-	void exitAtom(Python3Parser.AtomContext ctx);
+	void exitAtomOther(Python3Parser.AtomOtherContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code atomName}
+	 * labeled alternative in {@link Python3Parser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void enterAtomName(Python3Parser.AtomNameContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code atomName}
+	 * labeled alternative in {@link Python3Parser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void exitAtomName(Python3Parser.AtomNameContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code atomNumber}
+	 * labeled alternative in {@link Python3Parser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void enterAtomNumber(Python3Parser.AtomNumberContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code atomNumber}
+	 * labeled alternative in {@link Python3Parser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void exitAtomNumber(Python3Parser.AtomNumberContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code atomString}
+	 * labeled alternative in {@link Python3Parser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void enterAtomString(Python3Parser.AtomStringContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code atomString}
+	 * labeled alternative in {@link Python3Parser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void exitAtomString(Python3Parser.AtomStringContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code atomBool}
+	 * labeled alternative in {@link Python3Parser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void enterAtomBool(Python3Parser.AtomBoolContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code atomBool}
+	 * labeled alternative in {@link Python3Parser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void exitAtomBool(Python3Parser.AtomBoolContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Python3Parser#testlist_comp}.
 	 * @param ctx the parse tree

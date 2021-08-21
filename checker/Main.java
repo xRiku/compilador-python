@@ -8,9 +8,6 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.gui.TreeViewer;
-
-
-
 import parser.Python3Lexer;
 import parser.Python3Parser;
 
@@ -52,13 +49,13 @@ public class Main {
 		// ParseTree tree = parser.program();
 		ParseTree tree = parser.file_input();		
 		// ParseTree tree = parser.lexpr();
-		System.out.println(tree.toStringTree(parser));
+		// System.out.println(tree.toStringTree(parser));
 		// TestRig testRig = new TestRig();
 		// TestRig.process(lexer,parser);
 
-		TreeViewer viewr = new TreeViewer(Arrays.asList(
-                 parser.getRuleNames()),tree);
-        viewr.open();
+		// TreeViewer viewr = new TreeViewer(Arrays.asList(
+        //          parser.getRuleNames()),tree);
+        // viewr.open();
 
 		if (parser.getNumberOfSyntaxErrors() != 0) {
 			// Houve algum erro sintático. Termina a compilação aqui.
@@ -76,6 +73,7 @@ public class Main {
 		if (checker.hasPassed()) {			
 			System.out.println("PARSE SUCCESSFUL!");
 			checker.printTables();
+			// checker.printAST();
 		}
 	}
 

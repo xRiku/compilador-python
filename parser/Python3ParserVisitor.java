@@ -422,11 +422,40 @@ public interface Python3ParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAtom_expr(Python3Parser.Atom_exprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Python3Parser#atom}.
+	 * Visit a parse tree produced by the {@code atomOther}
+	 * labeled alternative in {@link Python3Parser#atom}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAtom(Python3Parser.AtomContext ctx);
+	T visitAtomOther(Python3Parser.AtomOtherContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code atomName}
+	 * labeled alternative in {@link Python3Parser#atom}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAtomName(Python3Parser.AtomNameContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code atomNumber}
+	 * labeled alternative in {@link Python3Parser#atom}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAtomNumber(Python3Parser.AtomNumberContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code atomString}
+	 * labeled alternative in {@link Python3Parser#atom}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAtomString(Python3Parser.AtomStringContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code atomBool}
+	 * labeled alternative in {@link Python3Parser#atom}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAtomBool(Python3Parser.AtomBoolContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Python3Parser#testlist_comp}.
 	 * @param ctx the parse tree

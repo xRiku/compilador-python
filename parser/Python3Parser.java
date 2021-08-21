@@ -6012,46 +6012,118 @@ public class Python3Parser extends Parser {
 	}
 
 	public static class AtomContext extends ParserRuleContext {
-		public TerminalNode OPEN_PAREN() { return getToken(Python3Parser.OPEN_PAREN, 0); }
-		public TerminalNode CLOSE_PAREN() { return getToken(Python3Parser.CLOSE_PAREN, 0); }
-		public TerminalNode OPEN_BRACK() { return getToken(Python3Parser.OPEN_BRACK, 0); }
-		public TerminalNode CLOSE_BRACK() { return getToken(Python3Parser.CLOSE_BRACK, 0); }
-		public TerminalNode OPEN_BRACE() { return getToken(Python3Parser.OPEN_BRACE, 0); }
-		public TerminalNode CLOSE_BRACE() { return getToken(Python3Parser.CLOSE_BRACE, 0); }
-		public TerminalNode NAME() { return getToken(Python3Parser.NAME, 0); }
-		public TerminalNode NUMBER() { return getToken(Python3Parser.NUMBER, 0); }
-		public TerminalNode ELLIPSIS() { return getToken(Python3Parser.ELLIPSIS, 0); }
-		public TerminalNode NONE() { return getToken(Python3Parser.NONE, 0); }
+		public AtomContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_atom; }
+	 
+		public AtomContext() { }
+		public void copyFrom(AtomContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class AtomBoolContext extends AtomContext {
 		public TerminalNode TRUE() { return getToken(Python3Parser.TRUE, 0); }
 		public TerminalNode FALSE() { return getToken(Python3Parser.FALSE, 0); }
+		public AtomBoolContext(AtomContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof Python3ParserListener ) ((Python3ParserListener)listener).enterAtomBool(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof Python3ParserListener ) ((Python3ParserListener)listener).exitAtomBool(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof Python3ParserVisitor ) return ((Python3ParserVisitor<? extends T>)visitor).visitAtomBool(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class AtomOtherContext extends AtomContext {
+		public TerminalNode OPEN_PAREN() { return getToken(Python3Parser.OPEN_PAREN, 0); }
+		public TerminalNode CLOSE_PAREN() { return getToken(Python3Parser.CLOSE_PAREN, 0); }
 		public Yield_exprContext yield_expr() {
 			return getRuleContext(Yield_exprContext.class,0);
 		}
 		public Testlist_compContext testlist_comp() {
 			return getRuleContext(Testlist_compContext.class,0);
 		}
+		public TerminalNode OPEN_BRACK() { return getToken(Python3Parser.OPEN_BRACK, 0); }
+		public TerminalNode CLOSE_BRACK() { return getToken(Python3Parser.CLOSE_BRACK, 0); }
+		public TerminalNode OPEN_BRACE() { return getToken(Python3Parser.OPEN_BRACE, 0); }
+		public TerminalNode CLOSE_BRACE() { return getToken(Python3Parser.CLOSE_BRACE, 0); }
 		public DictorsetmakerContext dictorsetmaker() {
 			return getRuleContext(DictorsetmakerContext.class,0);
 		}
+		public TerminalNode ELLIPSIS() { return getToken(Python3Parser.ELLIPSIS, 0); }
+		public TerminalNode NONE() { return getToken(Python3Parser.NONE, 0); }
+		public AtomOtherContext(AtomContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof Python3ParserListener ) ((Python3ParserListener)listener).enterAtomOther(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof Python3ParserListener ) ((Python3ParserListener)listener).exitAtomOther(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof Python3ParserVisitor ) return ((Python3ParserVisitor<? extends T>)visitor).visitAtomOther(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class AtomNumberContext extends AtomContext {
+		public TerminalNode NUMBER() { return getToken(Python3Parser.NUMBER, 0); }
+		public AtomNumberContext(AtomContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof Python3ParserListener ) ((Python3ParserListener)listener).enterAtomNumber(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof Python3ParserListener ) ((Python3ParserListener)listener).exitAtomNumber(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof Python3ParserVisitor ) return ((Python3ParserVisitor<? extends T>)visitor).visitAtomNumber(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class AtomStringContext extends AtomContext {
 		public List<TerminalNode> STRING() { return getTokens(Python3Parser.STRING); }
 		public TerminalNode STRING(int i) {
 			return getToken(Python3Parser.STRING, i);
 		}
-		public AtomContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_atom; }
+		public AtomStringContext(AtomContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof Python3ParserListener ) ((Python3ParserListener)listener).enterAtom(this);
+			if ( listener instanceof Python3ParserListener ) ((Python3ParserListener)listener).enterAtomString(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof Python3ParserListener ) ((Python3ParserListener)listener).exitAtom(this);
+			if ( listener instanceof Python3ParserListener ) ((Python3ParserListener)listener).exitAtomString(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof Python3ParserVisitor ) return ((Python3ParserVisitor<? extends T>)visitor).visitAtom(this);
+			if ( visitor instanceof Python3ParserVisitor ) return ((Python3ParserVisitor<? extends T>)visitor).visitAtomString(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class AtomNameContext extends AtomContext {
+		public TerminalNode NAME() { return getToken(Python3Parser.NAME, 0); }
+		public AtomNameContext(AtomContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof Python3ParserListener ) ((Python3ParserListener)listener).enterAtomName(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof Python3ParserListener ) ((Python3ParserListener)listener).exitAtomName(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof Python3ParserVisitor ) return ((Python3ParserVisitor<? extends T>)visitor).visitAtomName(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -6061,12 +6133,12 @@ public class Python3Parser extends Parser {
 		enterRule(_localctx, 136, RULE_atom);
 		int _la;
 		try {
-			enterOuterAlt(_localctx, 1);
-			{
 			setState(895);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case OPEN_PAREN:
+				_localctx = new AtomOtherContext(_localctx);
+				enterOuterAlt(_localctx, 1);
 				{
 				setState(868);
 				match(OPEN_PAREN);
@@ -6111,6 +6183,8 @@ public class Python3Parser extends Parser {
 				}
 				break;
 			case OPEN_BRACK:
+				_localctx = new AtomOtherContext(_localctx);
+				enterOuterAlt(_localctx, 2);
 				{
 				setState(874);
 				match(OPEN_BRACK);
@@ -6129,6 +6203,8 @@ public class Python3Parser extends Parser {
 				}
 				break;
 			case OPEN_BRACE:
+				_localctx = new AtomOtherContext(_localctx);
+				enterOuterAlt(_localctx, 3);
 				{
 				setState(879);
 				match(OPEN_BRACE);
@@ -6147,18 +6223,24 @@ public class Python3Parser extends Parser {
 				}
 				break;
 			case NAME:
+				_localctx = new AtomNameContext(_localctx);
+				enterOuterAlt(_localctx, 4);
 				{
 				setState(884);
 				match(NAME);
 				}
 				break;
 			case NUMBER:
+				_localctx = new AtomNumberContext(_localctx);
+				enterOuterAlt(_localctx, 5);
 				{
 				setState(885);
 				match(NUMBER);
 				}
 				break;
 			case STRING:
+				_localctx = new AtomStringContext(_localctx);
+				enterOuterAlt(_localctx, 6);
 				{
 				setState(887); 
 				_errHandler.sync(this);
@@ -6177,24 +6259,32 @@ public class Python3Parser extends Parser {
 				}
 				break;
 			case ELLIPSIS:
+				_localctx = new AtomOtherContext(_localctx);
+				enterOuterAlt(_localctx, 7);
 				{
 				setState(891);
 				match(ELLIPSIS);
 				}
 				break;
 			case NONE:
+				_localctx = new AtomOtherContext(_localctx);
+				enterOuterAlt(_localctx, 8);
 				{
 				setState(892);
 				match(NONE);
 				}
 				break;
 			case TRUE:
+				_localctx = new AtomBoolContext(_localctx);
+				enterOuterAlt(_localctx, 9);
 				{
 				setState(893);
 				match(TRUE);
 				}
 				break;
 			case FALSE:
+				_localctx = new AtomBoolContext(_localctx);
+				enterOuterAlt(_localctx, 10);
 				{
 				setState(894);
 				match(FALSE);
@@ -6202,7 +6292,6 @@ public class Python3Parser extends Parser {
 				break;
 			default:
 				throw new NoViableAltException(this);
-			}
 			}
 		}
 		catch (RecognitionException re) {
