@@ -19,7 +19,7 @@ public enum Type {
 	},
     REAL_TYPE {
 		public String toString() {
-			return "real";
+			return "float";
 		}
 	},
     BOOL_TYPE {
