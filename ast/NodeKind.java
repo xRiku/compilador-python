@@ -7,9 +7,89 @@ package ast;
 // fã, acho que só complica mais as coisas. Imagine uma classe abstrata AST
 // com mais de 20 classes herdando dela, uma classe para cada tipo de nó...
 public enum NodeKind {
+    FILE_INPUT_NODE {
+		public String toString() {
+            return "file_input";
+        }
+	},
 	ASSIGN_NODE {
 		public String toString() {
             return "=";
+        }
+	},
+    BLOCK_NODE {
+		public String toString() {
+            return "block";
+        }
+	},
+    COMPOUND_NODE {
+		public String toString() {
+            return "compound";
+        }
+	},
+    SIMPLE_STMT_NODE {
+		public String toString() {
+            return "simple_stmt";
+        }
+	},
+    EXPR_STMT_NODE {
+		public String toString() {
+            return "expr_stmt";
+        }
+	},
+    TEST_LIST_NODE {
+		public String toString() {
+            return "test_list";
+        }
+	},
+    TEST_NODE {
+		public String toString() {
+            return "test";
+        }
+	},
+    OR_TEST_NODE {
+		public String toString() {
+            return "or_test";
+        }
+	},
+    AND_TEST_NODE {
+		public String toString() {
+            return "and_test";
+        }
+	},
+    COMPARISON_NODE {
+		public String toString() {
+            return "comparison";
+        }
+	},
+    EXPR_NODE {
+		public String toString() {
+            return "expr";
+        }
+	},
+    XOR_NODE {
+		public String toString() {
+            return "xor";
+        }
+	},
+    AND_NODE {
+		public String toString() {
+            return "and";
+        }
+	},
+    SHIFT_NODE {
+		public String toString() {
+            return "shift";
+        }
+	},
+    ARITH_EXPR_NODE {
+		public String toString() {
+            return "arith_expr";
+        }
+	},
+    TERM_NODE {
+		public String toString() {
+            return "term";
         }
 	},
     EQ_NODE {

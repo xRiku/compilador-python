@@ -140,7 +140,7 @@ factor: ('+'|'-'|'~') factor | power;
 power: atom_expr ('**' factor)?;
 atom_expr: (AWAIT)? atom trailer*;
 atom: '(' (yield_expr|testlist_comp)? ')' #atomOther|
-       '[' (testlist_comp)? ']'  #atomOther| 
+       '[' (testlist_comp)? ']'  #atomList| 
        '{' (dictorsetmaker)? '}' #atomOther|
        NAME #atomName | NUMBER #atomNumber | STRING+ #atomString| '...' #atomOther | 'None' #atomOther | 'True' #atomBool | 'False' #atomBool;
 testlist_comp: (test|star_expr) ( comp_for | (',' (test|star_expr))* (',')? );

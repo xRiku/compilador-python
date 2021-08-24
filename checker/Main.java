@@ -45,17 +45,15 @@ public class Main {
 		// Cria um parser que consome os tokens do buffer.
 		Python3Parser parser = new Python3Parser(tokens);
 
-		// Começa o processo de parsing na regra 'program'.
+		// Começa o processo de parsing na regra 'file_input'.
 		// ParseTree tree = parser.program();
-		ParseTree tree = parser.file_input();		
-		// ParseTree tree = parser.lexpr();
-		// System.out.println(tree.toStringTree(parser));
-		// TestRig testRig = new TestRig();
-		// TestRig.process(lexer,parser);
+		ParseTree tree = parser.file_input();
 
 		TreeViewer viewr = new TreeViewer(Arrays.asList(
-                 parser.getRuleNames()),tree);
-        viewr.open();
+			parser.getRuleNames()),tree);
+		viewr.open();	
+		
+		
 
 		if (parser.getNumberOfSyntaxErrors() != 0) {
 			// Houve algum erro sintático. Termina a compilação aqui.
@@ -70,18 +68,11 @@ public class Main {
 
 		// Saída final.
 		
-		if (checker.hasPassed()) {			
+		if (checker.hasPassed()) {
 			System.out.println("PARSE SUCCESSFUL!");
 			checker.printTables();
-			// checker.printAST();
+			checker.printAST();
 		}
 	}
 
 }
-
-
-// public class Mylistener extends gramBaseListener {
-// 	@Override public void enterEveryRule(ParserRuleContext ctx) {  //see gramBaseListener for allowed functions
-// 		System.out.println("rule entered: " + ctx.getText());      //code that executes per rule
-// 	}
-// }

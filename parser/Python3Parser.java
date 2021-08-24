@@ -6084,8 +6084,6 @@ public class Python3Parser extends Parser {
 		public Testlist_compContext testlist_comp() {
 			return getRuleContext(Testlist_compContext.class,0);
 		}
-		public TerminalNode OPEN_BRACK() { return getToken(Python3Parser.OPEN_BRACK, 0); }
-		public TerminalNode CLOSE_BRACK() { return getToken(Python3Parser.CLOSE_BRACK, 0); }
 		public TerminalNode OPEN_BRACE() { return getToken(Python3Parser.OPEN_BRACE, 0); }
 		public TerminalNode CLOSE_BRACE() { return getToken(Python3Parser.CLOSE_BRACE, 0); }
 		public DictorsetmakerContext dictorsetmaker() {
@@ -6142,6 +6140,27 @@ public class Python3Parser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof Python3ParserVisitor ) return ((Python3ParserVisitor<? extends T>)visitor).visitAtomString(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class AtomListContext extends AtomContext {
+		public TerminalNode OPEN_BRACK() { return getToken(Python3Parser.OPEN_BRACK, 0); }
+		public TerminalNode CLOSE_BRACK() { return getToken(Python3Parser.CLOSE_BRACK, 0); }
+		public Testlist_compContext testlist_comp() {
+			return getRuleContext(Testlist_compContext.class,0);
+		}
+		public AtomListContext(AtomContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof Python3ParserListener ) ((Python3ParserListener)listener).enterAtomList(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof Python3ParserListener ) ((Python3ParserListener)listener).exitAtomList(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof Python3ParserVisitor ) return ((Python3ParserVisitor<? extends T>)visitor).visitAtomList(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -6218,7 +6237,7 @@ public class Python3Parser extends Parser {
 				}
 				break;
 			case OPEN_BRACK:
-				_localctx = new AtomOtherContext(_localctx);
+				_localctx = new AtomListContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(878);

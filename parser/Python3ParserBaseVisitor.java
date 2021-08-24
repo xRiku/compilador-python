@@ -509,6 +509,13 @@ public class Python3ParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitAtomList(Python3Parser.AtomListContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitAtomName(Python3Parser.AtomNameContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

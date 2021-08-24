@@ -858,6 +858,18 @@ public class Python3ParserBaseListener implements Python3ParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterAtomList(Python3Parser.AtomListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAtomList(Python3Parser.AtomListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterAtomName(Python3Parser.AtomNameContext ctx) { }
 	/**
 	 * {@inheritDoc}

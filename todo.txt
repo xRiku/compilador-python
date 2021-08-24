@@ -1,10 +1,7 @@
 TODO:
-– Operações aritméticas e de comparação basicas (+, ∗, <, ==, etc, etc).
 – Execucao de blocos sequenciais de codigo.
 – Pelo menos uma estrutura de escolha (if-then-else) e uma de repeticao (while,
 for, etc).
-– Declaração e manipulação de pelo menos um tipo composto (vetores, listas em
-Python, etc).
 – Declaração e execução correta de chamadas de funcao com numero de parametros
 fixos (nao precisa ser varargs).
 – Sistema de tipos que trata adequadamente todos os tipos permitidos.
@@ -15,3 +12,14 @@ Feito:
 – Declaração e manipulação de tipos básicos como int, real, string e bool (quando
 aplicável à LP).
 – Comandos de atribuição.
+– Operações aritméticas e de comparação basicas (+, ∗, <, ==, etc, etc).
+– Declaração e manipulação de pelo menos um tipo composto (vetores, listas em
+Python, etc).
+
+
+
+
+obs:
+fazer um visit para exp e verificar la se existe um assigment_stmt. 
+fazer um visit pro arith_expr e fazer as verificações de conv type
+ajeitar o visitAtomName.

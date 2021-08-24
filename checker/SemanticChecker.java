@@ -2,6 +2,8 @@ package checker;
 
 import org.antlr.v4.runtime.Token;
 
+import ast.AST;
+import static ast.NodeKind.*;
 import static ast.NodeKind.ASSIGN_NODE;
 import static ast.NodeKind.BOOL_VAL_NODE;
 import static ast.NodeKind.EQ_NODE;
@@ -42,6 +44,26 @@ import parser.Python3Parser.AtomNameContext;
 import parser.Python3Parser.AtomNumberContext;
 import parser.Python3Parser.AtomStringContext;
 import parser.Python3Parser.AtomBoolContext;
+import parser.Python3Parser.AtomListContext;
+import parser.Python3Parser.Atom_exprContext;
+import parser.Python3Parser.Simple_stmtContext;
+import parser.Python3Parser.Expr_stmtContext;
+import parser.Python3Parser.Small_stmtContext;
+import parser.Python3Parser.Testlist_star_exprContext;
+import parser.Python3Parser.TestContext;
+import parser.Python3Parser.Or_testContext;
+import parser.Python3Parser.And_testContext;
+import parser.Python3Parser.Not_testContext;
+import parser.Python3Parser.ComparisonContext;
+import parser.Python3Parser.ExprContext;
+import parser.Python3Parser.Xor_exprContext;
+import parser.Python3Parser.And_exprContext;
+import parser.Python3Parser.Shift_exprContext;
+import parser.Python3Parser.Arith_exprContext;
+import parser.Python3Parser.TermContext;
+import parser.Python3Parser.FactorContext;
+import parser.Python3Parser.PowerContext;
+import parser.Python3Parser.Atom_exprContext;
 import org.antlr.v4.gui.TestRig;
 import tables.StrTable;
 import tables.VarTable;
@@ -72,12 +94,14 @@ import typing.Type;
  * muito comum de erros. Veja o método visitAssign_stmt abaixo para
  * ter um exemplo.
  */
-public class SemanticChecker extends Python3ParserBaseVisitor<Void> {
+public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
 
 	private StrTable st = new StrTable();   // Tabela de strings.
     private VarTable vt = new VarTable();   // Tabela de variáveis.
     
     Type lastDeclType;  // Variável "global" com o último tipo declarado.
+    
+    AST root;
 
     private boolean leftmostvar = true;
 
@@ -89,8 +113,10 @@ public class SemanticChecker extends Python3ParserBaseVisitor<Void> {
     
     private boolean passed = true;
 
+     
+
     // Testa se o dado token foi declarado antes.
-    void checkVar(Token token) {
+    AST checkVar(Token token) {
     	String text = token.getText();
     	int line = token.getLine();
    		int idx = vt.lookupVar(text);
@@ -99,16 +125,17 @@ public class SemanticChecker extends Python3ParserBaseVisitor<Void> {
     			"SEMANTIC ERROR (%d): variable '%s' was not declared.\n",
 				line, text);
     		passed = false;
-            return;
+            return null;
         }
         // if (idx == -1) {            
         //     vt.addVar(text, line, lastDeclType);
         // }
         // return new AST(VAR_USE_NODE, idx, vt.getType(idx));
+        return null;
     }
     
     // Cria uma nova variável a partir do dado token.
-    void newVar(Type var_type) {
+    AST newVar(Type var_type) {
     	String text = leftvar.getText();
     	int line = leftvar.getLine();
    		int idx = vt.lookupVar(text);
@@ -121,6 +148,7 @@ public class SemanticChecker extends Python3ParserBaseVisitor<Void> {
         // }
         idx = vt.addVar(text, line, var_type);
         // return new AST(VAR_DECL_NODE, idx, lastDeclType);
+        return null;
     }
     
     // Retorna true se os testes passaram.
@@ -137,49 +165,309 @@ public class SemanticChecker extends Python3ParserBaseVisitor<Void> {
     	System.out.print("\n\n");
     }
 
+    void printAST() {
+    	AST.printDot(root, vt);
+    }
+
     @Override
-	public Void visitStmt(Python3Parser.StmtContext ctx) {
+	public AST visitFile_input(Python3Parser.File_inputContext ctx) {
+        this.root = AST.newSubtree(FILE_INPUT_NODE, NO_TYPE);
+        for (int i = 0; i < ctx.stmt().size(); i++) {
+    		AST child = visit(ctx.stmt(i));
+    		this.root.addChild(child);
+    	}        
+		return this.root;
+    }
+
+    @Override
+	public AST visitStmt(Python3Parser.StmtContext ctx) {
     	leftmostvar = true;
         assignment = false;
-        visit(ctx.simple_stmt());         
-    	return null; // Java says must return something even when Void
+        try {
+            return visit(ctx.simple_stmt());
+            // return AST.newSubtree(BLOCK_NODE, NO_TYPE, simple_stmt);
+        } catch (Exception e) {
+            AST compound_stmt = visit(ctx.compound_stmt());
+            return AST.newSubtree(COMPOUND_NODE, NO_TYPE, compound_stmt);
+        }
     }
 
     @Override
-    public Void visitComp_op(Python3Parser.Comp_opContext ctx) {
+	public AST visitSimple_stmt(Python3Parser.Simple_stmtContext ctx) 
+    {
+        if(ctx.small_stmt().size() != 1)
+        {
+            AST node = AST.newSubtree(SIMPLE_STMT_NODE, NO_TYPE);
+            for (int i = 0; i < ctx.small_stmt().size(); i++) 
+            {
+                AST child = visit(ctx.small_stmt(i));
+                node.addChild(child);
+            }
+            return node; 
+        } else{
+            return visit(ctx.small_stmt(0));
+        }
+    }
 
-        String text = leftvar.getText();
-        int idx = vt.lookupVar(text);
-        vt.setType(idx, Type.BOOL_TYPE);
-        return null; // Java says must return something even when Void
+    @Override
+	public AST visitSmall_stmt(Python3Parser.Small_stmtContext ctx) {
+        return visit(ctx.expr_stmt());
+    }
+    
+    @Override
+	public AST visitExpr_stmt(Python3Parser.Expr_stmtContext ctx) {
+        if(ctx.testlist_star_expr().size() != 1)
+        {
+            AST node = AST.newSubtree(EXPR_STMT_NODE, NO_TYPE);
+            for (int i = 0; i < ctx.testlist_star_expr().size(); i++) 
+            {
+                AST child = visit(ctx.testlist_star_expr(i));
+                node.addChild(child);
+            }
+            return node; 
+        } else{
+            return visit(ctx.testlist_star_expr(0));
+        }
+    }
+
+    @Override
+	public AST visitTestlist_star_expr(Python3Parser.Testlist_star_exprContext ctx) {
+        if(ctx.test().size() != 1)
+        {
+            AST node = AST.newSubtree(TEST_LIST_NODE, NO_TYPE);
+            for (int i = 0; i < ctx.test().size(); i++) 
+            {
+                AST child = visit(ctx.test(i));
+                node.addChild(child);
+            }
+            return node; 
+        } else{
+            return visit(ctx.test(0));
+        }        
+    }
+
+    @Override
+	public AST visitTest(Python3Parser.TestContext ctx) {
+        if(ctx.or_test().size() != 1)
+        {
+            AST node = AST.newSubtree(TEST_NODE, NO_TYPE);
+            for (int i = 0; i < ctx.or_test().size(); i++) 
+            {
+                AST child = visit(ctx.or_test(i));
+                node.addChild(child);
+            }
+            return node; 
+        } else{
+            return visit(ctx.or_test(0));
+        }
+    }
+
+    @Override
+	public AST visitOr_test(Python3Parser.Or_testContext ctx) {
+        if(ctx.and_test().size() != 1)
+        {
+            AST node = AST.newSubtree(OR_TEST_NODE, NO_TYPE);
+            for (int i = 0; i < ctx.and_test().size(); i++) 
+            {
+                AST child = visit(ctx.and_test(i));
+                node.addChild(child);
+            }
+            return node; 
+        }
+        else
+        {
+            return visit(ctx.and_test(0));
+        }
+    }
+
+    @Override
+	public AST visitAnd_test(Python3Parser.And_testContext ctx) {
+        if(ctx.not_test().size() != 1)
+        {
+            AST node = AST.newSubtree(AND_TEST_NODE, NO_TYPE);
+            for (int i = 0; i < ctx.not_test().size(); i++) 
+            {
+                AST child = visit(ctx.not_test(i));
+                node.addChild(child);
+            }
+            return node; 
+        }
+        else
+        {
+            return visit(ctx.not_test(0));
+        }        
+    }
+    @Override
+	public AST visitNot_test(Python3Parser.Not_testContext ctx) {
+        return visit(ctx.comparison());
+    }
+    @Override
+	public AST visitComparison(Python3Parser.ComparisonContext ctx) {
+        if(ctx.expr().size() != 1)
+        {
+            AST node = AST.newSubtree(COMPARISON_NODE, NO_TYPE);
+            for (int i = 0; i < ctx.expr().size(); i++) 
+            {
+                AST child = visit(ctx.expr(i));
+                node.addChild(child);
+            }
+            return node; 
+        }
+        else
+        {
+            return visit(ctx.expr(0));
+        }        
+    }
+    @Override
+	public AST visitExpr(Python3Parser.ExprContext ctx) {
+        if(ctx.xor_expr().size() != 1)
+        {
+            AST node = AST.newSubtree(EXPR_NODE, NO_TYPE);
+            for (int i = 0; i < ctx.xor_expr().size(); i++) 
+            {
+                AST child = visit(ctx.xor_expr(i));
+                node.addChild(child);
+            }
+            return node; 
+        }
+        else
+        {
+            return visit(ctx.xor_expr(0));
+        }        
+    }
+    @Override
+	public AST visitXor_expr(Python3Parser.Xor_exprContext ctx) {
+        if(ctx.and_expr().size() != 1)
+        {
+            AST node = AST.newSubtree(XOR_NODE, NO_TYPE);
+            for (int i = 0; i < ctx.and_expr().size(); i++) 
+            {
+                AST child = visit(ctx.and_expr(i));
+                node.addChild(child);
+            }
+            return node; 
+        }
+        else
+        {
+            return visit(ctx.and_expr(0));
+        }
+    }
+    @Override
+	public AST visitAnd_expr(Python3Parser.And_exprContext ctx) {
+        if(ctx.shift_expr().size() != 1)
+        {
+            AST node = AST.newSubtree(AND_NODE, NO_TYPE);
+            for (int i = 0; i < ctx.shift_expr().size(); i++) 
+            {
+                AST child = visit(ctx.shift_expr(i));
+                node.addChild(child);
+            }
+            return node; 
+        }
+        else
+        {
+            return visit(ctx.shift_expr(0));
+        }
+    }
+    @Override
+	public AST visitShift_expr(Python3Parser.Shift_exprContext ctx) {
+        if(ctx.arith_expr().size() != 1)
+        {
+            AST node = AST.newSubtree(SHIFT_NODE, NO_TYPE);
+            for (int i = 0; i < ctx.arith_expr().size(); i++) 
+            {
+                AST child = visit(ctx.arith_expr(i));
+                node.addChild(child);
+            }
+            return node; 
+        }
+        else
+        {
+            return visit(ctx.arith_expr(0));
+        }        
+    }
+
+    @Override // fazer depois para cada sinal
+	public AST visitArith_expr(Python3Parser.Arith_exprContext ctx) {
+        if(ctx.term().size() != 1)
+        {
+            AST node = AST.newSubtree(ARITH_EXPR_NODE, NO_TYPE);
+            for (int i = 0; i < ctx.term().size(); i++) 
+            {
+                AST child = visit(ctx.term(i));
+                node.addChild(child);
+            }
+            return node; 
+        }
+        else
+        {
+            return visit(ctx.term(0));
+        }        
+    }
+    @Override
+	public AST visitTerm(Python3Parser.TermContext ctx) {
+        if(ctx.factor().size() != 1)
+        {
+            AST node = AST.newSubtree(TERM_NODE, NO_TYPE);
+            for (int i = 0; i < ctx.factor().size(); i++) 
+            {
+                AST child = visit(ctx.factor(i));
+                node.addChild(child);
+            }
+            return node; 
+        }
+        else
+        {
+            return visit(ctx.factor(0));
+        }        
+    }
+    @Override
+	public AST visitFactor(Python3Parser.FactorContext ctx) {
+        return visit(ctx.power());
+    }
+    @Override
+	public AST visitPower(Python3Parser.PowerContext ctx) {
+        return visit(ctx.atom_expr());
+    }
+    @Override
+	public AST visitAtom_expr(Python3Parser.Atom_exprContext ctx) {
+        return visit(ctx.atom());
+    }
+
+    @Override
+    public AST visitComp_op(Python3Parser.Comp_opContext ctx) {
+
+        if(assignment){
+            String text = leftvar.getText();
+            int idx = vt.lookupVar(text);
+            vt.setType(idx, Type.BOOL_TYPE);
+        }
+        return null;
     }    
         
-    @Override
-	public Void visitSmall_stmt(Python3Parser.Small_stmtContext ctx) {
-    	// Visita a declaração de tipo para definir a variável lastDeclType.
-        // System.out.println(ctx);
-        visit(ctx.expr_stmt()); 
-            // System.err.println(e);
-        
-        // checkVar(ctx.NAME().getSymbol());
-    	// Agora testa se a variável foi redeclarada.
-    	return null; // Java says must return something even when Void
-    }
+    // @Override
+	// public AST visitExpr_stmt(Python3Parser.Expr_stmtContext ctx) {
+    	
+    //     visit(ctx.expr_stmt()); 
+    //     return null;
+    // }
 
     @Override
-	public Void visitAssign_stmt(Python3Parser.Assign_stmtContext ctx) {
+	public AST visitAssign_stmt(Python3Parser.Assign_stmtContext ctx) {
     	assignment = true;
-    	return null; // Java says must return something even when Void
+    	return null;
     }
 
     @Override
-    public Void visitAtomNumber(Python3Parser.AtomNumberContext ctx) {
+    public AST visitAtomNumber(Python3Parser.AtomNumberContext ctx) {
         Type localtype = Type.REAL_TYPE;
-        System.out.println(ctx.NUMBER().getSymbol().getText());
+        float floatNumber = 0;
+        int integerNumber = 0;
         try {
-            double x = Integer.parseInt(ctx.NUMBER().getSymbol().getText());
+            integerNumber = Integer.parseInt(ctx.NUMBER().getSymbol().getText());
             localtype = Type.INT_TYPE;
         } catch (NumberFormatException nfe) {
+            floatNumber = Float.parseFloat(ctx.NUMBER().getSymbol().getText());
             localtype = Type.REAL_TYPE;
         }
     	if (assignment) {
@@ -192,11 +480,13 @@ public class SemanticChecker extends Python3ParserBaseVisitor<Void> {
                 vt.setType(idx, localtype);
             }
         }
-		return null; // Java says must return something even when Void
+        if(localtype == Type.REAL_TYPE) return new AST(REAL_VAL_NODE, floatNumber, REAL_TYPE);
+        else return new AST(INT_VAL_NODE, integerNumber, INT_TYPE);
+		
     }
 
     @Override
-    public Void visitAtomName(Python3Parser.AtomNameContext ctx) {
+    public AST visitAtomName(Python3Parser.AtomNameContext ctx) {
     	// Visita a declaração de tipo para definir a variável lastDeclType.
 		// this.lastDeclType = Type.INT_TYPE;
         this.lastDeclType = Type.STR_TYPE;
@@ -212,35 +502,29 @@ public class SemanticChecker extends Python3ParserBaseVisitor<Void> {
 		// checkVar(ctx.NAME().getSymbol());
 		// checkVar(ctx.STRING().getSymbol());
     	// Agora testa se a variável foi redeclarada.
-    	return null; // Java says must return something even when Void
+    	return null;
     }
 
     @Override
-    public Void visitAtomString(Python3Parser.AtomStringContext ctx) {
-    	// Visita a declaração de tipo para definir a variável lastDeclType.
-		// this.lastDeclType = Type.INT_TYPE;
-        // System.out.println(ctx.STRING());
+    public AST visitAtomString(Python3Parser.AtomStringContext ctx) {
+    	// Visita a declaração de tipo para definir a variável lastDeclType.		
         st.add(ctx.STRING().toString().substring(1,ctx.STRING().toString().length()-1));
         Type localtype = Type.STR_TYPE;
+        int idx = -1;
         if (assignment) {
             String text = leftvar.getText();
-   		    int idx = vt.lookupVar(text);
+   		    idx = vt.lookupVar(text);
             if (idx == -1) {
                 newVar(localtype);
             } else {
                 vt.setType(idx, localtype);
-            }
-            assignment = false;
+            }            
         }
-
-		// checkVar(ctx.NAME().getSymbol());
-		// checkVar(ctx.STRING().getSymbol());
-    	// Agora testa se a variável foi redeclarada.
-    	return null; // Java says must return something even when Void
+    	return new AST(STR_VAL_NODE, idx, STR_TYPE);
     }
 
     @Override
-    public Void visitAtomBool(Python3Parser.AtomBoolContext ctx) {
+    public AST visitAtomBool(Python3Parser.AtomBoolContext ctx) {
         Type localtype = Type.BOOL_TYPE;
         if (assignment) {
             String text = leftvar.getText();
@@ -249,17 +533,23 @@ public class SemanticChecker extends Python3ParserBaseVisitor<Void> {
                 newVar(localtype);
             } else {
                 vt.setType(idx, localtype);
-            }
-            assignment = false;
-        }
+            }            
+        }    	
+    	return null;
+    }
 
-    	// Visita a declaração de tipo para definir a variável lastDeclType.
-		// this.lastDeclType = Type.INT_TYPE;
-        // System.out.println(ctx.STRING().getSymbol());
-		// checkVar(ctx.NAME().getSymbol());
-		// checkVar(ctx.STRING().getSymbol());
-    	// Agora testa se a variável foi redeclarada.
-    	return null; // Java says must return something even when Void
+    public AST visitAtomList(Python3Parser.AtomListContext ctx) {
+        Type localtype = Type.LIST_TYPE;
+        if (assignment) {
+            String text = leftvar.getText();
+   		    int idx = vt.lookupVar(text);
+            if (idx == -1) {
+                newVar(localtype);
+            } else {
+                vt.setType(idx, localtype);
+            }
+        }
+        return null;
     }
 
 	
