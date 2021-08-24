@@ -462,12 +462,19 @@ public interface Python3ParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAtomString(Python3Parser.AtomStringContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code atomBool}
+	 * Visit a parse tree produced by the {@code atomBoolTrue}
 	 * labeled alternative in {@link Python3Parser#atom}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAtomBool(Python3Parser.AtomBoolContext ctx);
+	T visitAtomBoolTrue(Python3Parser.AtomBoolTrueContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code atomBoolFalse}
+	 * labeled alternative in {@link Python3Parser#atom}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAtomBoolFalse(Python3Parser.AtomBoolFalseContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Python3Parser#testlist_comp}.
 	 * @param ctx the parse tree

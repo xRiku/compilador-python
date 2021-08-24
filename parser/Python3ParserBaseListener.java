@@ -906,13 +906,25 @@ public class Python3ParserBaseListener implements Python3ParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAtomBool(Python3Parser.AtomBoolContext ctx) { }
+	@Override public void enterAtomBoolTrue(Python3Parser.AtomBoolTrueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAtomBool(Python3Parser.AtomBoolContext ctx) { }
+	@Override public void exitAtomBoolTrue(Python3Parser.AtomBoolTrueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAtomBoolFalse(Python3Parser.AtomBoolFalseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAtomBoolFalse(Python3Parser.AtomBoolFalseContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

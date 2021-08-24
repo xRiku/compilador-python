@@ -132,6 +132,11 @@ public enum NodeKind {
             return "";
         }
 	},
+    LIST_VAL_NODE {
+		public String toString() {
+            return "";
+        }
+	},
     STR_VAL_NODE {
 		public String toString() {
             return "";

@@ -28,12 +28,7 @@ import static typing.Type.STR_TYPE;
 import java.io.IOException;
 
 import parser.Python3Parser;
-// import parser.Python3Parser.Assign_stmtContext;
-// import parser.Python3Parser.ExprIdContext;
-// import parser.Python3Parser.ExprStrValContext;
-// import parser.Python3Parser.Read_stmtContext;
 import parser.Python3ParserBaseVisitor;
-// import parser.Python3Parser.testlistStarExpr;
 import parser.Python3Parser.Expr_stmtContext;
 import parser.Python3Parser.Comp_opContext;
 import parser.Python3Parser.StmtContext;
@@ -43,7 +38,9 @@ import parser.Python3Parser.AtomContext;
 import parser.Python3Parser.AtomNameContext;
 import parser.Python3Parser.AtomNumberContext;
 import parser.Python3Parser.AtomStringContext;
-import parser.Python3Parser.AtomBoolContext;
+// import parser.Python3Parser.AtomBoolContext;
+import parser.Python3Parser.AtomBoolTrueContext;
+import parser.Python3Parser.AtomBoolFalseContext;
 import parser.Python3Parser.AtomListContext;
 import parser.Python3Parser.Atom_exprContext;
 import parser.Python3Parser.Simple_stmtContext;
@@ -126,12 +123,8 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
 				line, text);
     		passed = false;
             return null;
-        }
-        // if (idx == -1) {            
-        //     vt.addVar(text, line, lastDeclType);
-        // }
-        // return new AST(VAR_USE_NODE, idx, vt.getType(idx));
-        return null;
+        }        
+        return new AST(VAR_USE_NODE, idx, vt.getType(idx));        
     }
     
     // Cria uma nova variável a partir do dado token.
@@ -139,16 +132,11 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
     	String text = leftvar.getText();
     	int line = leftvar.getLine();
    		int idx = vt.lookupVar(text);
-        // if (idx != -1) {
-        // 	System.err.printf(
-    	// 		"SEMANTIC ERROR (%d): variable '%s' already declared at line %d.\n",
-        //         line, text, vt.getLine(idx));
-        // 	passed = false;
-        //     return;
-        // }
-        idx = vt.addVar(text, line, var_type);
-        // return new AST(VAR_DECL_NODE, idx, lastDeclType);
-        return null;
+        if(idx == -1)
+        {
+           idx = vt.addVar(text, line, var_type);
+        }
+        return new AST(VAR_DECL_NODE, idx, NO_TYPE);        
     }
     
     // Retorna true se os testes passaram.
@@ -218,7 +206,12 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
 	public AST visitExpr_stmt(Python3Parser.Expr_stmtContext ctx) {
         if(ctx.testlist_star_expr().size() != 1)
         {
-            AST node = AST.newSubtree(EXPR_STMT_NODE, NO_TYPE);
+            AST node;
+            try {
+                node = visit(ctx.assign_stmt(0));   
+            } catch (Exception e) {
+                node = AST.newSubtree(EXPR_STMT_NODE, NO_TYPE);
+            }
             for (int i = 0; i < ctx.testlist_star_expr().size(); i++) 
             {
                 AST child = visit(ctx.testlist_star_expr(i));
@@ -228,6 +221,12 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
         } else{
             return visit(ctx.testlist_star_expr(0));
         }
+    }
+
+    @Override
+	public AST visitAssign_stmt(Python3Parser.Assign_stmtContext ctx) {
+    	assignment = true;
+    	return AST.newSubtree(ASSIGN_NODE, NO_TYPE);
     }
 
     @Override
@@ -445,19 +444,6 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
         return null;
     }    
         
-    // @Override
-	// public AST visitExpr_stmt(Python3Parser.Expr_stmtContext ctx) {
-    	
-    //     visit(ctx.expr_stmt()); 
-    //     return null;
-    // }
-
-    @Override
-	public AST visitAssign_stmt(Python3Parser.Assign_stmtContext ctx) {
-    	assignment = true;
-    	return null;
-    }
-
     @Override
     public AST visitAtomNumber(Python3Parser.AtomNumberContext ctx) {
         Type localtype = Type.REAL_TYPE;
@@ -473,12 +459,7 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
     	if (assignment) {
             String text = leftvar.getText();
    		    int idx = vt.lookupVar(text);
-            if (idx == -1) {
-                newVar(localtype);
-            } else {
-                if (vt.getType(idx) == Type.REAL_TYPE) return null;
-                vt.setType(idx, localtype);
-            }
+            if (vt.getType(idx) != Type.REAL_TYPE) vt.setType(idx, localtype);
         }
         if(localtype == Type.REAL_TYPE) return new AST(REAL_VAL_NODE, floatNumber, REAL_TYPE);
         else return new AST(INT_VAL_NODE, integerNumber, INT_TYPE);
@@ -488,21 +469,13 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
     @Override
     public AST visitAtomName(Python3Parser.AtomNameContext ctx) {
     	// Visita a declaração de tipo para definir a variável lastDeclType.
-		// this.lastDeclType = Type.INT_TYPE;
-        this.lastDeclType = Type.STR_TYPE;
-        // System.out.println("Foi o x");
-        if (leftmostvar) {
+		if (leftmostvar) {
             leftvar = ctx.NAME().getSymbol();
             leftmostvar = false;
-            // newVar(ctx.NAME().getSymbol());
+            return newVar(NO_TYPE);            
         } else {
-            checkVar(ctx.NAME().getSymbol());
-        }
-        // System.out.println(ctx.NAME().getSymbol());
-		// checkVar(ctx.NAME().getSymbol());
-		// checkVar(ctx.STRING().getSymbol());
-    	// Agora testa se a variável foi redeclarada.
-    	return null;
+            return checkVar(ctx.NAME().getSymbol());
+        }        
     }
 
     @Override
@@ -514,42 +487,45 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
         if (assignment) {
             String text = leftvar.getText();
    		    idx = vt.lookupVar(text);
-            if (idx == -1) {
-                newVar(localtype);
-            } else {
-                vt.setType(idx, localtype);
-            }            
+            vt.setType(idx, localtype);            
         }
     	return new AST(STR_VAL_NODE, idx, STR_TYPE);
     }
 
     @Override
-    public AST visitAtomBool(Python3Parser.AtomBoolContext ctx) {
+    public AST visitAtomBoolTrue(Python3Parser.AtomBoolTrueContext ctx) {
         Type localtype = Type.BOOL_TYPE;
         if (assignment) {
             String text = leftvar.getText();
    		    int idx = vt.lookupVar(text);
-            if (idx == -1) {
-                newVar(localtype);
-            } else {
-                vt.setType(idx, localtype);
-            }            
+            vt.setType(idx, localtype);
+            
         }    	
-    	return null;
+    	return new AST(BOOL_VAL_NODE, 1, BOOL_TYPE);
     }
+
+    @Override
+    public AST visitAtomBoolFalse(Python3Parser.AtomBoolFalseContext ctx) {
+        Type localtype = Type.BOOL_TYPE;
+        if (assignment) {
+            String text = leftvar.getText();
+   		    int idx = vt.lookupVar(text);            
+            vt.setType(idx, localtype);
+                        
+        }    	
+    	return new AST(BOOL_VAL_NODE, 0, BOOL_TYPE);
+    }
+
 
     public AST visitAtomList(Python3Parser.AtomListContext ctx) {
         Type localtype = Type.LIST_TYPE;
+        int idx = -1;
         if (assignment) {
             String text = leftvar.getText();
-   		    int idx = vt.lookupVar(text);
-            if (idx == -1) {
-                newVar(localtype);
-            } else {
-                vt.setType(idx, localtype);
-            }
+   		    idx = vt.lookupVar(text);
+            vt.setType(idx, localtype);            
         }
-        return null;
+        return new AST(LIST_VAL_NODE, idx, Type.LIST_TYPE);
     }
 
 	

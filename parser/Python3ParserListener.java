@@ -760,17 +760,29 @@ public interface Python3ParserListener extends ParseTreeListener {
 	 */
 	void exitAtomString(Python3Parser.AtomStringContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code atomBool}
+	 * Enter a parse tree produced by the {@code atomBoolTrue}
 	 * labeled alternative in {@link Python3Parser#atom}.
 	 * @param ctx the parse tree
 	 */
-	void enterAtomBool(Python3Parser.AtomBoolContext ctx);
+	void enterAtomBoolTrue(Python3Parser.AtomBoolTrueContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code atomBool}
+	 * Exit a parse tree produced by the {@code atomBoolTrue}
 	 * labeled alternative in {@link Python3Parser#atom}.
 	 * @param ctx the parse tree
 	 */
-	void exitAtomBool(Python3Parser.AtomBoolContext ctx);
+	void exitAtomBoolTrue(Python3Parser.AtomBoolTrueContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code atomBoolFalse}
+	 * labeled alternative in {@link Python3Parser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void enterAtomBoolFalse(Python3Parser.AtomBoolFalseContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code atomBoolFalse}
+	 * labeled alternative in {@link Python3Parser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void exitAtomBoolFalse(Python3Parser.AtomBoolFalseContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Python3Parser#testlist_comp}.
 	 * @param ctx the parse tree

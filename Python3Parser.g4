@@ -142,7 +142,7 @@ atom_expr: (AWAIT)? atom trailer*;
 atom: '(' (yield_expr|testlist_comp)? ')' #atomOther|
        '[' (testlist_comp)? ']'  #atomList| 
        '{' (dictorsetmaker)? '}' #atomOther|
-       NAME #atomName | NUMBER #atomNumber | STRING+ #atomString| '...' #atomOther | 'None' #atomOther | 'True' #atomBool | 'False' #atomBool;
+       NAME #atomName | NUMBER #atomNumber | STRING+ #atomString| '...' #atomOther | 'None' #atomOther | 'True' #atomBoolTrue | 'False' #atomBoolFalse;
 testlist_comp: (test|star_expr) ( comp_for | (',' (test|star_expr))* (',')? );
 trailer: '(' (arglist)? ')' | '[' subscriptlist ']' | '.' NAME;
 subscriptlist: subscript_ (',' subscript_)* (',')?;
