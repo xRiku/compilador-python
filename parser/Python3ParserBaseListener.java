@@ -786,6 +786,18 @@ public class Python3ParserBaseListener implements Python3ParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterPlus_minus(Python3Parser.Plus_minusContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPlus_minus(Python3Parser.Plus_minusContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterArith_expr(Python3Parser.Arith_exprContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -793,6 +805,18 @@ public class Python3ParserBaseListener implements Python3ParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitArith_expr(Python3Parser.Arith_exprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBasic_terms(Python3Parser.Basic_termsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBasic_terms(Python3Parser.Basic_termsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -27,6 +27,11 @@ public enum NodeKind {
             return "compound";
         }
 	},
+    WHILE_NODE {
+		public String toString() {
+            return "while";
+        }
+	},
     SIMPLE_STMT_NODE {
 		public String toString() {
             return "simple_stmt";
@@ -107,6 +112,16 @@ public enum NodeKind {
             return "if";
         }
 	},
+    ELIF_NODE {
+		public String toString() {
+            return "elif";
+        }
+	},
+    ELSE_NODE {
+		public String toString() {
+            return "else";
+        }
+	},
     INT_VAL_NODE {
 		public String toString() {
             return "";
@@ -117,11 +132,7 @@ public enum NodeKind {
             return "-";
         }
 	},
-    OVER_NODE {
-		public String toString() {
-            return "/";
-        }
-	},
+    
     PLUS_NODE {
 		public String toString() {
             return "+";
@@ -142,9 +153,59 @@ public enum NodeKind {
             return "";
         }
 	},
-    TIMES_NODE {
+    STAR_NODE {
 		public String toString() {
             return "*";
+        }
+	},
+    DIV_NODE {
+		public String toString() {
+            return "/";
+        }
+	},
+    MOD_NODE {
+		public String toString() {
+            return "%";
+        }
+	},
+    LESS_THAN_NODE {
+		public String toString() {
+            return "<";
+        }
+	},
+    GREATER_THAN_NODE {
+		public String toString() {
+            return ">";
+        }
+	},  
+    EQUALS_NODE {
+		public String toString() {
+            return "==";
+        }
+	}, 
+    GT_EQ_NODE {
+		public String toString() {
+            return ">=";
+        }
+	}, 
+    LT_EQ_NODE {
+		public String toString() {
+            return "<=";
+        }
+	}, 
+    NOT_EQ_2_NODE {
+		public String toString() {
+            return "!=";
+        }
+	},
+    IN_NODE {
+		public String toString() {
+            return "in";
+        }
+	},
+    IS_NODE {
+		public String toString() {
+            return "is";
         }
 	},
     VAR_DECL_NODE {

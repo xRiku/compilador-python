@@ -650,6 +650,16 @@ public interface Python3ParserListener extends ParseTreeListener {
 	 */
 	void exitShift_expr(Python3Parser.Shift_exprContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Python3Parser#plus_minus}.
+	 * @param ctx the parse tree
+	 */
+	void enterPlus_minus(Python3Parser.Plus_minusContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Python3Parser#plus_minus}.
+	 * @param ctx the parse tree
+	 */
+	void exitPlus_minus(Python3Parser.Plus_minusContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Python3Parser#arith_expr}.
 	 * @param ctx the parse tree
 	 */
@@ -659,6 +669,16 @@ public interface Python3ParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitArith_expr(Python3Parser.Arith_exprContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Python3Parser#basic_terms}.
+	 * @param ctx the parse tree
+	 */
+	void enterBasic_terms(Python3Parser.Basic_termsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Python3Parser#basic_terms}.
+	 * @param ctx the parse tree
+	 */
+	void exitBasic_terms(Python3Parser.Basic_termsContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Python3Parser#term}.
 	 * @param ctx the parse tree

@@ -4,20 +4,6 @@ import org.antlr.v4.runtime.Token;
 
 import ast.AST;
 import static ast.NodeKind.*;
-import static ast.NodeKind.ASSIGN_NODE;
-import static ast.NodeKind.BOOL_VAL_NODE;
-import static ast.NodeKind.EQ_NODE;
-import static ast.NodeKind.IF_NODE;
-import static ast.NodeKind.INT_VAL_NODE;
-import static ast.NodeKind.MINUS_NODE;
-import static ast.NodeKind.OVER_NODE;
-import static ast.NodeKind.PLUS_NODE;
-import static ast.NodeKind.REAL_VAL_NODE;
-import static ast.NodeKind.STR_VAL_NODE;
-import static ast.NodeKind.TIMES_NODE;
-import static ast.NodeKind.VAR_DECL_NODE;
-import static ast.NodeKind.VAR_LIST_NODE;
-import static ast.NodeKind.VAR_USE_NODE;
 import static typing.Conv.I2R;
 import static typing.Type.BOOL_TYPE;
 import static typing.Type.INT_TYPE;
@@ -38,7 +24,8 @@ import parser.Python3Parser.AtomContext;
 import parser.Python3Parser.AtomNameContext;
 import parser.Python3Parser.AtomNumberContext;
 import parser.Python3Parser.AtomStringContext;
-// import parser.Python3Parser.AtomBoolContext;
+import parser.Python3Parser.Plus_minusContext;
+import parser.Python3Parser.Basic_termsContext;
 import parser.Python3Parser.AtomBoolTrueContext;
 import parser.Python3Parser.AtomBoolFalseContext;
 import parser.Python3Parser.AtomListContext;
@@ -61,6 +48,10 @@ import parser.Python3Parser.TermContext;
 import parser.Python3Parser.FactorContext;
 import parser.Python3Parser.PowerContext;
 import parser.Python3Parser.Atom_exprContext;
+import parser.Python3Parser.Compound_stmtContext;
+import parser.Python3Parser.While_stmtContext;
+import parser.Python3Parser.If_stmtContext;
+import parser.Python3Parser.SuiteContext;
 import org.antlr.v4.gui.TestRig;
 import tables.StrTable;
 import tables.VarTable;
@@ -157,6 +148,25 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
     	AST.printDot(root, vt);
     }
 
+// ----------------------------------------------------------------------------
+    // Type checking and inference.
+
+    private static void typeError(int lineNo, String op, Type t1, Type t2) {
+    	System.out.printf("SEMANTIC ERROR (%d): incompatible types for operator '%s', LHS is '%s' and RHS is '%s'.\n",
+    			lineNo, op, t1.toString(), t2.toString());
+    	System.exit(1);
+    }
+
+    private static void checkBoolExpr(int lineNo, String cmd, Type t) {
+        if (t != BOOL_TYPE) {
+            System.out.printf("SEMANTIC ERROR (%d): conditional expression in '%s' is '%s' instead of '%s'.\n",
+               lineNo, cmd, t.toString(), BOOL_TYPE.toString());
+            System.exit(1);
+        }
+    }
+
+// ----------------------------------------------------------------------------
+
     @Override
 	public AST visitFile_input(Python3Parser.File_inputContext ctx) {
         this.root = AST.newSubtree(FILE_INPUT_NODE, NO_TYPE);
@@ -175,8 +185,15 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
             return visit(ctx.simple_stmt());
             // return AST.newSubtree(BLOCK_NODE, NO_TYPE, simple_stmt);
         } catch (Exception e) {
-            AST compound_stmt = visit(ctx.compound_stmt());
-            return AST.newSubtree(COMPOUND_NODE, NO_TYPE, compound_stmt);
+            return visit(ctx.compound_stmt());            
+        }
+    }
+
+    public AST visitCompound_stmt(Python3Parser.Compound_stmtContext ctx) {
+        try {
+            return visit(ctx.while_stmt());
+        } catch (Exception e) {
+            return visit(ctx.if_stmt());
         }
     }
 
@@ -304,19 +321,65 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
 	public AST visitComparison(Python3Parser.ComparisonContext ctx) {
         if(ctx.expr().size() != 1)
         {
-            AST node = AST.newSubtree(COMPARISON_NODE, NO_TYPE);
-            for (int i = 0; i < ctx.expr().size(); i++) 
-            {
-                AST child = visit(ctx.expr(i));
-                node.addChild(child);
-            }
+            AST node_l = visit(ctx.expr(0));
+            AST node_r;
+            AST node = AST.newSubtree(COMPARISON_NODE, BOOL_TYPE);
+            for(int i = 0; i < ctx.comp_op().size(); i++){
+                if(i != 0){
+                    node_l = node;
+                }
+                node = visit(ctx.comp_op(i));                
+                node_r = visit(ctx.expr(i+1));                 
+                node.addChild(node_l);
+                node.addChild(node_r);
+            }            
             return node; 
         }
         else
         {
             return visit(ctx.expr(0));
-        }        
+        }
     }
+    @Override
+    public AST visitComp_op(Python3Parser.Comp_opContext ctx) {
+        AST node;        
+        switch (ctx.getText()) {
+            case "==":
+                node = AST.newSubtree(EQUALS_NODE, BOOL_TYPE);
+                break;
+            case "<":
+                node = AST.newSubtree(LESS_THAN_NODE, BOOL_TYPE);
+                break;
+            case ">":
+                node = AST.newSubtree(GREATER_THAN_NODE, BOOL_TYPE);
+                break;
+            case "<=":
+                node = AST.newSubtree(LT_EQ_NODE, BOOL_TYPE);
+                break;
+            case ">=":
+                node = AST.newSubtree(GT_EQ_NODE, BOOL_TYPE);
+                break;
+            case "!=":
+                node = AST.newSubtree(NOT_EQ_2_NODE, BOOL_TYPE);
+                break;                
+            case "is":
+                node = AST.newSubtree(IS_NODE, BOOL_TYPE);
+                break;
+            case "in":
+                node = AST.newSubtree(IN_NODE, BOOL_TYPE);
+                break;
+            default:
+                node = AST.newSubtree(COMPARISON_NODE, BOOL_TYPE);
+                break;
+        }
+        if(assignment){
+            String text = leftvar.getText();
+            int idx = vt.lookupVar(text);
+            vt.setType(idx, Type.BOOL_TYPE);
+        }
+        return node;
+    }
+      
     @Override
 	public AST visitExpr(Python3Parser.ExprContext ctx) {
         if(ctx.xor_expr().size() != 1)
@@ -389,12 +452,18 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
     @Override // fazer depois para cada sinal
 	public AST visitArith_expr(Python3Parser.Arith_exprContext ctx) {
         if(ctx.term().size() != 1)
-        {
+        {   
+            AST node_l = visit(ctx.term(0));
+            AST node_r;
             AST node = AST.newSubtree(ARITH_EXPR_NODE, NO_TYPE);
-            for (int i = 0; i < ctx.term().size(); i++) 
-            {
-                AST child = visit(ctx.term(i));
-                node.addChild(child);
+            for(int i = 0; i < ctx.plus_minus().size(); i++){
+                if(i != 0){
+                    node_l = node;
+                }
+                node = visit(ctx.plus_minus(i));                
+                node_r = visit(ctx.term(i+1));                 
+                node.addChild(node_l);
+                node.addChild(node_r);
             }
             return node; 
         }
@@ -403,15 +472,34 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
             return visit(ctx.term(0));
         }        
     }
+
+    public AST visitPlus_minus(Python3Parser.Plus_minusContext ctx) {
+        AST node;
+        System.out.println(ctx.getText());
+        if( ctx.getText().equals("+")) {
+            node = AST.newSubtree(PLUS_NODE, NO_TYPE);    
+        }else{
+            node = AST.newSubtree(MINUS_NODE, NO_TYPE);
+        }
+        return node;
+    }
+
+
     @Override
 	public AST visitTerm(Python3Parser.TermContext ctx) {
         if(ctx.factor().size() != 1)
         {
+            AST node_l = visit(ctx.factor(0));
+            AST node_r;
             AST node = AST.newSubtree(TERM_NODE, NO_TYPE);
-            for (int i = 0; i < ctx.factor().size(); i++) 
-            {
-                AST child = visit(ctx.factor(i));
-                node.addChild(child);
+            for(int i = 0; i < ctx.basic_terms().size(); i++){
+                if(i != 0){
+                    node_l = node;
+                }
+                node = visit(ctx.basic_terms(i));                
+                node_r = visit(ctx.factor(i+1));                 
+                node.addChild(node_l);
+                node.addChild(node_r);
             }
             return node; 
         }
@@ -420,6 +508,26 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
             return visit(ctx.factor(0));
         }        
     }
+    
+    public AST visitBasic_terms(Python3Parser.Basic_termsContext ctx) {
+        AST node;
+        System.out.println(ctx.getText());
+        switch(ctx.getText()) {
+            case "*":
+                node = AST.newSubtree(STAR_NODE, NO_TYPE);  
+                break;
+            case "/":
+                node = AST.newSubtree(DIV_NODE, NO_TYPE);  
+                break;
+            case "%":
+                node = AST.newSubtree(MOD_NODE, NO_TYPE);  
+                break;
+            default:
+                node = AST.newSubtree(TERM_NODE, NO_TYPE); 
+        }
+        return node;
+    }
+
     @Override
 	public AST visitFactor(Python3Parser.FactorContext ctx) {
         return visit(ctx.power());
@@ -433,17 +541,7 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
         return visit(ctx.atom());
     }
 
-    @Override
-    public AST visitComp_op(Python3Parser.Comp_opContext ctx) {
-
-        if(assignment){
-            String text = leftvar.getText();
-            int idx = vt.lookupVar(text);
-            vt.setType(idx, Type.BOOL_TYPE);
-        }
-        return null;
-    }    
-        
+     
     @Override
     public AST visitAtomNumber(Python3Parser.AtomNumberContext ctx) {
         Type localtype = Type.REAL_TYPE;
@@ -528,5 +626,53 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
         return new AST(LIST_VAL_NODE, idx, Type.LIST_TYPE);
     }
 
-	
+    public AST visitIf_stmt(Python3Parser.If_stmtContext ctx) {
+        
+        AST exprNode = visit(ctx.test(0));
+		checkBoolExpr(ctx.IF().getSymbol().getLine(), "if", exprNode.type);
+
+		// Constrói o bloco de código do loop.
+        AST suiteNode = visit(ctx.suite(0));
+    	AST ifNode = AST.newSubtree(IF_NODE, NO_TYPE, exprNode, suiteNode);
+        if(ctx.test().size() > 1){            
+            AST elifNode;
+            for(int i = 1; i < ctx.test().size(); i++){
+                AST exprNodeElif = visit(ctx.test(i));
+                AST suiteNodeElif = visit(ctx.suite(i));
+                elifNode = AST.newSubtree(ELIF_NODE, NO_TYPE, exprNodeElif, suiteNodeElif);
+                ifNode.addChild(elifNode);
+            }
+        }
+        if(ctx.suite().size() > 1 && ctx.suite().size() > ctx.test().size()){
+            AST suiteElseNode = visit(ctx.suite(ctx.suite().size()-1));
+            AST elseNode = AST.newSubtree(ELSE_NODE, NO_TYPE, suiteElseNode);
+            ifNode.addChild(elseNode);            
+        }
+        return ifNode;
+    }
+    
+    @Override
+	public AST visitWhile_stmt(Python3Parser.While_stmtContext ctx) {
+		// Analisa a expressão booleana.
+		AST exprNode = visit(ctx.test());
+		checkBoolExpr(ctx.WHILE().getSymbol().getLine(), "while", exprNode.type);
+
+		// Constrói o bloco de código do loop.
+        AST suiteNode = visit(ctx.suite(0));
+    	return AST.newSubtree(WHILE_NODE, NO_TYPE, suiteNode, exprNode);
+	}
+
+    public AST visitSuite(Python3Parser.SuiteContext ctx) {
+        AST blockNode = AST.newSubtree(BLOCK_NODE, NO_TYPE);
+        if(ctx.stmt().size() > 0){
+            for (int i = 0; i < ctx.stmt().size(); i++) {
+                AST child = visit(ctx.stmt(i));
+                blockNode.addChild(child);
+            }
+            return blockNode;
+        }
+        else{
+            return visit(ctx.simple_stmt());
+        }
+    }
 }

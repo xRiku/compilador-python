@@ -1,7 +1,4 @@
 TODO:
-– Execucao de blocos sequenciais de codigo.
-– Pelo menos uma estrutura de escolha (if-then-else) e uma de repeticao (while,
-for, etc).
 – Declaração e execução correta de chamadas de funcao com numero de parametros
 fixos (nao precisa ser varargs).
 – Sistema de tipos que trata adequadamente todos os tipos permitidos.
@@ -9,6 +6,9 @@ fixos (nao precisa ser varargs).
 
 
 Feito:
+– Execucao de blocos sequenciais de codigo.
+– Pelo menos uma estrutura de escolha (if-then-else) e uma de repeticao (while,
+for, etc).
 – Declaração e manipulação de tipos básicos como int, real, string e bool (quando
 aplicável à LP).
 – Comandos de atribuição.

@@ -397,11 +397,23 @@ public interface Python3ParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitShift_expr(Python3Parser.Shift_exprContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Python3Parser#plus_minus}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPlus_minus(Python3Parser.Plus_minusContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Python3Parser#arith_expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitArith_expr(Python3Parser.Arith_exprContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Python3Parser#basic_terms}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBasic_terms(Python3Parser.Basic_termsContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Python3Parser#term}.
 	 * @param ctx the parse tree
