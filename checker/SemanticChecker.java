@@ -396,9 +396,7 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
                 
                 Type lt = node_l.type;
 		        Type rt = node_r.type;
-		        Unif unif;
-                System.out.println(lt);
-                System.out.println(rt);
+		        Unif unif;                
                 unif = lt.unifyComp(rt);
                 if (unif.type == NO_TYPE) {
                     typeError(ctx.comp_op(i).op.getLine(), ctx.comp_op(i).op.getText(), lt, rt);
@@ -668,6 +666,7 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
 // Visita a regra trailer: '(' (arglist)? ')' | '[' subscriptlist ']' | '.' NAME
     @Override
 	public AST visitTrailer(Python3Parser.TrailerContext ctx) {
+        if(ctx.arglist() == null) return AST.newSubtree(FUNC_CALL_NODE, NO_TYPE);
         return visit(ctx.arglist());
     }
 
@@ -838,8 +837,8 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
     public AST visitFuncdef(Python3Parser.FuncdefContext ctx)
     {        
         AST paramNode = visit(ctx.parameters());
-
-        AST blockNode = visit(ctx.suite());
+        
+        AST blockNode = visit(ctx.suite());       
         
         return AST.newSubtree(DEF_NODE, NO_TYPE, paramNode, blockNode);
     }
@@ -848,6 +847,7 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
     @Override
     public AST visitParameters(Python3Parser.ParametersContext ctx)
     {
+        if(ctx.typedargslist() == null) return AST.newSubtree(PARAM_NODE, NO_TYPE);
         return visit(ctx.typedargslist());
     }
 

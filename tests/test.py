@@ -1,12 +1,12 @@
-# "testando"
-# x = "10" + "5"
-# z = 3 * 4 / 8.2
-# y = True < 1
-# z = "abc"
-# y = True
-# y = x + z
-# j = 4 + 7.5 - 8 * 5 - 7 * 9 + 8 % 2
-# k = 5 * 7 * 9 / 5
+"testando"
+x = "10" + "5"
+z = 3 * 4 / 8.2
+y = True < 1
+z = "abc"
+y = True
+y = x + z
+j = 4 + 7.5 - 8 * 5 - 7 * 9 + 8 % 2
+k = 5 * 7 * 9 / 5
 a = 2
 b = 3
 c = 7
@@ -21,9 +21,9 @@ else:
     z = 9
 
 teste(1,2,3)
-# f = [1,2,3,4]
+f = [1,2,3,4]
 
-# if (3 < z): 
-#     x = x + 1
-# else:
-#     x = x + 2
+if 3 < z: 
+    x = x + "teste"
+else:
+    x = x + "testando"

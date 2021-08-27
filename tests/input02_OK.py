@@ -1,6 +1,7 @@
-# def times_2(number):
-#     z = 5 * number
-    # return number
+number = 2
+def times_2(number):
+    z = 5 * number
+    return z
 
 x = 19
 
@@ -10,4 +11,5 @@ if 5 == 3:
     y = 2
 else:
     y = 3
-print("times_2(y)")
+print(times_2(2))
+
