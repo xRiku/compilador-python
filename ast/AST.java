@@ -18,7 +18,7 @@ public class AST {
 	public  final NodeKind kind;
 	public  final int intData;
 	public  final float floatData;
-	public  final Type type;
+	public Type type;
 	private final List<AST> children; // Privado para que a manipulação da lista seja controlável.
 
 	// Construtor completo para poder tornar todos os campos finais.

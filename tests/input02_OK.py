@@ -1,12 +1,13 @@
-def times_2(array):
-    new_array = [i*2 for i in array] 
-    return new_array
+# def times_2(number):
+#     z = 5 * number
+    # return number
 
+x = 19
 
-
-if __name__ == "__main__":
-    x = [1,2,3,4,5]
-    y = [i*2 for i in x]
-    imprimir = lambda x: print(x)
-    print(f'The final sum is: {sum(y)}')
-    imprimir(x)
+y = 6 + x
+z = x + 1.5
+if 5 == 3:
+    y = 2
+else:
+    y = 3
+print("times_2(y)")

@@ -128,15 +128,15 @@ not_test: 'not' not_test | comparison;
 comparison: expr (comp_op expr)*;
 // <> isn't actually a valid comparison operator in Python. It's here for the
 // sake of a __future__ import described in PEP 401 (which really works :-)
-comp_op: LESS_THAN | GREATER_THAN  | EQUALS | GT_EQ |LT_EQ | NOT_EQ_1 | NOT_EQ_2 | IN |'not' 'in' | IS |'is' 'not';
+comp_op: op=(LESS_THAN | GREATER_THAN  | EQUALS | GT_EQ |LT_EQ | NOT_EQ_1 | NOT_EQ_2 | IN | IS ) | 'is' 'not' | 'not' 'in';
 star_expr: '*' expr;
 expr: xor_expr ('|' xor_expr)*;
 xor_expr: and_expr ('^' and_expr)*;
 and_expr: shift_expr ('&' shift_expr)*;
 shift_expr: arith_expr (('<<'|'>>') arith_expr)*;
-plus_minus: ADD | MINUS;
+plus_minus: op=(ADD | MINUS);
 arith_expr: term ((plus_minus) term)*;
-basic_terms: STAR | DIV | MOD;
+basic_terms: op=(STAR | DIV | MOD);
 term: factor ((basic_terms |'@'|'//') factor)*;
 factor: ('+'|'-'|'~') factor | power;
 power: atom_expr ('**' factor)?;

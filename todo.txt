@@ -5,10 +5,10 @@ fixos (nao precisa ser varargs).
 – Operacoes de IO basicas sobre stdin e stdout para permitir testes.
 
 
-Feito:
 – Execucao de blocos sequenciais de codigo.
 – Pelo menos uma estrutura de escolha (if-then-else) e uma de repeticao (while,
 for, etc).
+Feito:
 – Declaração e manipulação de tipos básicos como int, real, string e bool (quando
 aplicável à LP).
 – Comandos de atribuição.
@@ -20,6 +20,4 @@ Python, etc).
 
 
 obs:
-fazer um visit para exp e verificar la se existe um assigment_stmt. 
-fazer um visit pro arith_expr e fazer as verificações de conv type
-ajeitar o visitAtomName.
+Variáveis, postas em expressões, estão dando erro

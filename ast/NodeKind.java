@@ -22,6 +22,36 @@ public enum NodeKind {
             return "block";
         }
 	},
+    DEF_NODE {
+		public String toString() {
+            return "def";
+        }
+	},
+    BREAK_NODE {
+		public String toString() {
+            return "break";
+        }
+	},
+    CONTINUE_NODE {
+		public String toString() {
+            return "continue";
+        }
+	},
+    RETURN_NODE {
+		public String toString() {
+            return "return";
+        }
+	},
+    PARAM_NODE {
+		public String toString() {
+            return "parameters";
+        }
+	},
+    FUNC_CALL_NODE {
+		public String toString() {
+            return "function";
+        }
+	},
     COMPOUND_NODE {
 		public String toString() {
             return "compound";
@@ -228,9 +258,9 @@ public enum NodeKind {
             return "B2I";
         }
 	},
-    B2R_NODE {
+    B2F_NODE {
 		public String toString() {
-            return "B2R";
+            return "B2F";
         }
 	},
     B2S_NODE {
@@ -238,9 +268,9 @@ public enum NodeKind {
             return "B2S";
         }
 	},
-    I2R_NODE {
+    I2F_NODE {
 		public String toString() {
-            return "I2R";
+            return "I2F";
         }
 	},
     I2S_NODE {
@@ -248,9 +278,9 @@ public enum NodeKind {
             return "I2S";
         }
 	},
-    R2S_NODE {
+    F2S_NODE {
 		public String toString() {
-            return "R2S";
+            return "F2S";
         }
 	};
 	
