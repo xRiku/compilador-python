@@ -98,8 +98,8 @@ import typing.Conv.Unif;
  */
 public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
 
-	private StrTable st = new StrTable();   // Tabela de strings.
-    private VarTable vt = new VarTable();   // Tabela de variáveis.
+	public final StrTable st = new StrTable();   // Tabela de strings.
+    public final VarTable vt = new VarTable();   // Tabela de variáveis.
     
     Type lastDeclType;  // Variável "global" com o último tipo declarado.
     
@@ -114,6 +114,10 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
     private boolean comparison = false;
     
     private boolean passed = true;
+
+    private boolean function = false;
+
+    private boolean print = false;
 
     // Testa se o dado token foi declarado antes.
     AST checkVar(Token token) {
@@ -143,12 +147,12 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
     }
     
     // Retorna true se os testes passaram.
-    boolean hasPassed() {
+    public boolean hasPassed() {
     	return passed;
     }
     
     // Exibe o conteúdo das tabelas em stdout.
-    void printTables() {
+    public void printTables() {
         System.out.print("\n\n");
         System.out.print(st);
         System.out.print("\n\n");
@@ -156,8 +160,12 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
     	System.out.print("\n\n");
     }
 
-    void printAST() {
+    public void printAST() {
     	AST.printDot(root, vt);
+    }
+
+    public AST getAST() {
+    	return this.root;
     }
 
 // ----------------------------------------------------------------------------
@@ -186,7 +194,7 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
         for (int i = 0; i < ctx.stmt().size(); i++) {
     		AST child = visit(ctx.stmt(i));
     		this.root.addChild(child);
-    	}        
+    	}
 		return this.root;
     }
 
@@ -657,8 +665,10 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
     @Override
 	public AST visitAtom_expr(Python3Parser.Atom_exprContext ctx) {
         if(ctx.trailer().size() > 0){
-            // AST trailerNode = visit(ctx.trailer(0));
-            return visit(ctx.trailer(0));            
+            function = true;
+            visit(ctx.atom());
+            function = false;            
+            return visit(ctx.trailer(0));
         }
         return visit(ctx.atom());
     }
@@ -666,7 +676,7 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
 // Visita a regra trailer: '(' (arglist)? ')' | '[' subscriptlist ']' | '.' NAME
     @Override
 	public AST visitTrailer(Python3Parser.TrailerContext ctx) {
-        if(ctx.arglist() == null) return AST.newSubtree(FUNC_CALL_NODE, NO_TYPE);
+        if(ctx.arglist() == null && print == false) return AST.newSubtree(FUNC_CALL_NODE, NO_TYPE);        
         return visit(ctx.arglist());
     }
 
@@ -674,6 +684,10 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
     @Override
     public AST visitArglist(Python3Parser.ArglistContext ctx) {
         AST node = AST.newSubtree(FUNC_CALL_NODE, NO_TYPE);
+        if(print){
+            node = AST.newSubtree(PRINT_NODE, NO_TYPE);
+            print = false;
+        }        
         for (int i = 0; i < ctx.argument().size(); i++) {
             AST child = visit(ctx.argument(i));
             node.addChild(child);
@@ -705,7 +719,7 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
    		    int idx = vt.lookupVar(text);
             if (vt.getType(idx) != Type.FLOAT_TYPE) vt.setType(idx, localtype);
         }
-        if(localtype == Type.FLOAT_TYPE) return new AST(REAL_VAL_NODE, floatNumber, FLOAT_TYPE);
+        if(localtype == Type.FLOAT_TYPE) return new AST(FLOAT_VAL_NODE, floatNumber, FLOAT_TYPE);
         else return new AST(INT_VAL_NODE, integerNumber, INT_TYPE);
 		
     }
@@ -714,7 +728,13 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
     @Override
     public AST visitAtomName(Python3Parser.AtomNameContext ctx) {
     	// Visita a declaração de tipo para definir a variável lastDeclType.
-		if (leftmostvar && assignment) {
+		if(function){
+            if(ctx.NAME().getText().equals("print")){
+              print = true;  
+            }
+            return null;
+        }
+        if (leftmostvar && assignment) {
             leftvar = ctx.NAME().getSymbol();
             leftmostvar = false;
             return newVar(NO_TYPE);
@@ -727,9 +747,8 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
     @Override
     public AST visitAtomString(Python3Parser.AtomStringContext ctx) {
     	// Visita a declaração de tipo para definir a variável lastDeclType.		
-        st.add(ctx.STRING().toString().substring(1,ctx.STRING().toString().length()-1));
-        Type localtype = Type.STR_TYPE;
-        int idx = -1;
+        int idx = st.addStr(ctx.STRING().toString().substring(1,ctx.STRING().toString().length()-1));
+        Type localtype = Type.STR_TYPE;        
         if (assignment) {
             String text = leftvar.getText();
    		    idx = vt.lookupVar(text);
@@ -791,15 +810,14 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
             AST elifNode;
             for(int i = 1; i < ctx.test().size(); i++){
                 AST exprNodeElif = visit(ctx.test(i));
-                AST suiteNodeElif = visit(ctx.suite(i));
-                elifNode = AST.newSubtree(ELIF_NODE, NO_TYPE, exprNodeElif, suiteNodeElif);
-                ifNode.addChild(elifNode);
+                AST suiteNodeElif = visit(ctx.suite(i));                
+                ifNode.addChild(exprNodeElif);
+                ifNode.addChild(suiteNodeElif);
             }
         }
         if(ctx.suite().size() > 1 && ctx.suite().size() > ctx.test().size()){
-            AST suiteElseNode = visit(ctx.suite(ctx.suite().size()-1));
-            AST elseNode = AST.newSubtree(ELSE_NODE, NO_TYPE, suiteElseNode);
-            ifNode.addChild(elseNode);            
+            AST suiteElseNode = visit(ctx.suite(ctx.suite().size()-1));            
+            ifNode.addChild(suiteElseNode);            
         }
         return ifNode;
     }

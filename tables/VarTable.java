@@ -44,6 +44,10 @@ public final class VarTable {
 	public void setType(int i, Type type) {
 		table.get(i).type = type;
 	}
+
+	public int size() {
+		return table.size();
+	}
 	
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

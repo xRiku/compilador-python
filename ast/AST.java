@@ -64,6 +64,11 @@ public class AST {
 	    return node;
 	}
 
+	// Retorna o número de filhos do nó.
+	public int getChildCount() {
+		return this.children.size();
+	}
+
 	// Variáveis internas usadas para geração da saída em DOT.
 	// Estáticas porque só precisamos de uma instância.
 	private static int nr;
@@ -84,7 +89,7 @@ public class AST {
 	    	System.err.printf("%s", this.kind.toString());
 	    }
 	    if (NodeKind.hasData(this.kind)) {
-	        if (this.kind == NodeKind.REAL_VAL_NODE) {
+	        if (this.kind == NodeKind.FLOAT_VAL_NODE) {
 	        	System.err.printf("%.2f", this.floatData);
 	        } else if (this.kind == NodeKind.STR_VAL_NODE) {
 	        	System.err.printf("@%d", this.intData);

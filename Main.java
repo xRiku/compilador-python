@@ -1,5 +1,3 @@
-package checker;
-
 import java.io.IOException;
 
 import java.util.Arrays;
@@ -7,6 +5,9 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+
+import checker.SemanticChecker;
+import code.Interpreter;
 import org.antlr.v4.gui.TreeViewer;
 import parser.Python3Lexer;
 import parser.Python3Parser;
@@ -49,9 +50,9 @@ public class Main {
 		// ParseTree tree = parser.program();
 		ParseTree tree = parser.file_input();
 
-		TreeViewer viewr = new TreeViewer(Arrays.asList(
-			parser.getRuleNames()),tree);
-		viewr.open();	
+		// TreeViewer viewr = new TreeViewer(Arrays.asList(
+		// 	parser.getRuleNames()),tree);
+		// viewr.open();	
 		
 		
 
@@ -67,7 +68,9 @@ public class Main {
 		checker.visit(tree);
 
 		// Saída final.
-		
+		// Interpreter interpreter = new Interpreter(checker.st, checker.vt);
+		// interpreter.execute(checker.getAST());
+
 		if (checker.hasPassed()) {
 			System.out.println("PARSE SUCCESSFUL!");
 			checker.printTables();

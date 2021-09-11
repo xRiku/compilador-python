@@ -52,6 +52,16 @@ public enum NodeKind {
             return "function";
         }
 	},
+    PRINT_NODE {
+		public String toString() {
+            return "print";
+        }
+	},
+    INPUT_NODE {
+		public String toString() {
+            return "input";
+        }
+	},
     COMPOUND_NODE {
 		public String toString() {
             return "compound";
@@ -127,11 +137,6 @@ public enum NodeKind {
             return "term";
         }
 	},
-    EQ_NODE {
-		public String toString() {
-            return "==";
-        }
-	},
     BOOL_VAL_NODE {
 		public String toString() {
             return "";
@@ -168,7 +173,7 @@ public enum NodeKind {
             return "+";
         }
 	},
-    REAL_VAL_NODE {
+    FLOAT_VAL_NODE {
 		public String toString() {
             return "";
         }
@@ -288,7 +293,7 @@ public enum NodeKind {
 		switch(kind) {
 	        case BOOL_VAL_NODE:
 	        case INT_VAL_NODE:
-	        case REAL_VAL_NODE:
+	        case FLOAT_VAL_NODE:
 	        case STR_VAL_NODE:
 	        case VAR_DECL_NODE:
 	        case VAR_USE_NODE:

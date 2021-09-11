@@ -38,18 +38,13 @@ antlr: Python3Lexer.g4 Python3Parser.g4
 javac:
 	rm -rf $(BIN_PATH)
 	mkdir $(BIN_PATH)
-	$(JAVAC) $(CLASS_PATH_OPTION) -d $(BIN_PATH) */*.java
+	$(JAVAC) $(CLASS_PATH_OPTION) -d $(BIN_PATH) */*.java Main.java
 
 # 'Python3' é o prefixo comum das duas gramáticas (Python3Lexer e Python3Parser).
 # 'file_input' é a regra inicial de Python3Parser.
 run:
-	$(JAVA) $(CLASS_PATH_OPTION):$(BIN_PATH) $(MAIN_PATH)/Main $(FILE)
+	$(JAVA) $(CLASS_PATH_OPTION):$(BIN_PATH) Main $(FILE)
 
-runall:
-	-for FILE in $(IN)/*.ezl; do \
-	 	echo -e "\nRunning $${FILE}" && \
-	 	$(JAVA) $(CLASS_PATH_OPTION):$(BIN_PATH) $(MAIN_PATH)/Main $${FILE}; \
-	done;
 
 
 clean:

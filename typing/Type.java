@@ -2,11 +2,11 @@ package typing;
 
 import static typing.Conv.B2I;
 import static typing.Conv.B2F;
-import static typing.Conv.B2S;
+// import static typing.Conv.B2S;
 import static typing.Conv.I2F;
-import static typing.Conv.I2S;
+// import static typing.Conv.I2S;
 import static typing.Conv.NONE;
-import static typing.Conv.F2S;
+// import static typing.Conv.F2S;
 
 import typing.Conv.Unif;
 
