@@ -119,6 +119,8 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
 
     private boolean print = false;
 
+    private boolean input = false;
+
     // Testa se o dado token foi declarado antes.
     AST checkVar(Token token) {
         String text = token.getText();
@@ -676,7 +678,18 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
 // Visita a regra trailer: '(' (arglist)? ')' | '[' subscriptlist ']' | '.' NAME
     @Override
 	public AST visitTrailer(Python3Parser.TrailerContext ctx) {
-        if(ctx.arglist() == null && print == false) return AST.newSubtree(FUNC_CALL_NODE, NO_TYPE);        
+        if(ctx.arglist() == null && print == false && input == false) return AST.newSubtree(FUNC_CALL_NODE, NO_TYPE);
+        else if (ctx.arglist() == null && print){
+            print = false;
+            return AST.newSubtree(PRINT_NODE, NO_TYPE);            
+        }else if(ctx.arglist() == null && input){
+            if (assignment) {
+                String text = leftvar.getText();
+                int idx = vt.lookupVar(text);
+                vt.setType(idx, STR_TYPE);
+            }
+            return AST.newSubtree(INPUT_NODE, STR_TYPE);
+        }
         return visit(ctx.arglist());
     }
 
@@ -687,7 +700,15 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
         if(print){
             node = AST.newSubtree(PRINT_NODE, NO_TYPE);
             print = false;
-        }        
+        }else if(input){
+            if (assignment) {
+                String text = leftvar.getText();
+                int idx = vt.lookupVar(text);
+                vt.setType(idx, STR_TYPE);
+            }
+            node = AST.newSubtree(INPUT_NODE, STR_TYPE);
+            input = false;
+        }
         for (int i = 0; i < ctx.argument().size(); i++) {
             AST child = visit(ctx.argument(i));
             node.addChild(child);
@@ -731,6 +752,8 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
 		if(function){
             if(ctx.NAME().getText().equals("print")){
               print = true;  
+            }else if(ctx.NAME().getText().equals("input")){
+                input = true;  
             }
             return null;
         }

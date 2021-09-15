@@ -26,6 +26,7 @@ public abstract class ASTBaseVisitor<T> {
 		switch(node.kind) {
 	        case ASSIGN_NODE:   		return visitAssign(node);
 			case PRINT_NODE:			return visitPrint(node);
+			case INPUT_NODE:			return visitRead(node);
 			case FILE_INPUT_NODE: 		return visitFile_input(node);
 	        case EQUALS_NODE:       	return visitEq(node);
 	        case NOT_EQ_2_NODE:       	return visitNeq(node);

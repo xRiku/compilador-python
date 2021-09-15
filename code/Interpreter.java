@@ -31,6 +31,7 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 	private final StrTable st;
 	private final VarTable vt;
 	private final Scanner in; // Para leitura de stdin
+	private int indexVar = -1;
 
 	// Construtor basicão.
 	public Interpreter(StrTable st, VarTable vt) {
@@ -61,15 +62,17 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 	protected Void visitAssign(AST node) {
 		// Visita recursivamente a expressão da direita para
 		// calcular o seu valor, que vai ficar no topo da pilha.
+		int varIdx = node.getChild(0).intData;
+		indexVar = varIdx;
 		AST rexpr = node.getChild(1);
 		visit(rexpr);
 		// Armazena o valor da pilha na memória, conforme o tipo
 		// da variável.
-		int varIdx = node.getChild(0).intData;
+		// int varIdx = node.getChild(0).intData;
 		Type varType = vt.getType(varIdx);
 		if (varType == FLOAT_TYPE) {
 			memory.storef(varIdx, stack.popf());
-		} else {
+		} else if (varType != Type.STR_TYPE) {
 			memory.storei(varIdx, stack.popi());
 		}
 		return null; // Java exige um valor de retorno mesmo para Void... :/
@@ -397,18 +400,19 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 
 	@Override
 	protected Void visitRead(AST node) {
-		int varIdx = node.getChild(0).intData;
-		Type varType = vt.getType(varIdx);
-		switch(varType) {
-			case INT_TYPE:  readInt(varIdx);    break;
-	        case FLOAT_TYPE: readReal(varIdx);   break;
-	        case BOOL_TYPE: readBool(varIdx);   break;
-	        case STR_TYPE:  readStr(varIdx);    break;
-			case NO_TYPE:
-		    default:
-	            System.err.printf("Invalid type: %s!\n", varType.toString());
-	            System.exit(1);
-		}
+		// int varIdx = node.getChild(0).intData;
+		// Type varType = vt.getType(varIdx);
+		readStr(indexVar);
+		// switch(varType) {
+		// 	case INT_TYPE:  readInt(varIdx);    break;
+	    //     case FLOAT_TYPE: readReal(varIdx);   break;
+	    //     case BOOL_TYPE: readBool(varIdx);   break;
+	    //     case STR_TYPE:  readStr(varIdx);    break;
+		// 	case NO_TYPE:
+		//     default:
+	    //         System.err.printf("Invalid type: %s!\n", varType.toString());
+	    //         System.exit(1);
+		// }
 		return null; // Java exige um valor de retorno mesmo para Void... :/
 	}
 
@@ -438,7 +442,7 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 
 	private Void readStr(int varIdx) {
 		System.out.printf("read (str): ");
-		String s = in.next();
+		String s = in.nextLine();
 		int strIdx = st.addStr(s);
 		memory.storei(varIdx, strIdx);
 		return null; // Java exige um valor de retorno mesmo para Void... :/
@@ -550,7 +554,8 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 		int strIdx = stack.popi(); // String pointer
 		String originalStr = st.get(strIdx);
 		String unescapedStr = unescapeStr(originalStr);
-		System.out.print(unescapedStr);
+		if(unescapedStr.equalsIgnoreCase("ERROR at string conversion!")) System.out.print(originalStr);
+		else System.out.print(unescapedStr);
 
 		return null; // Java exige um valor de retorno mesmo para Void... :/
 	}
