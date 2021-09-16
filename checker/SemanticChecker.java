@@ -64,6 +64,8 @@ import parser.Python3Parser.Break_stmtContext;
 import parser.Python3Parser.Continue_stmtContext;
 import parser.Python3Parser.Return_stmtContext;
 import org.antlr.v4.gui.TestRig;
+
+import tables.FuncTable;
 import tables.StrTable;
 import tables.VarTable;
 import typing.Type;
@@ -100,6 +102,7 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
 
 	public final StrTable st = new StrTable();   // Tabela de strings.
     public final VarTable vt = new VarTable();   // Tabela de variáveis.
+    public final FuncTable ft = new FuncTable(); // Tabela de Funções
     
     Type lastDeclType;  // Variável "global" com o último tipo declarado.
     
@@ -146,6 +149,25 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
            idx = vt.addVar(text, line, var_type);
         }
         return new AST(VAR_DECL_NODE, idx, NO_TYPE);        
+    }
+
+    void checkFunc(Token token, boolean def) {
+        String text = token.getText();
+    	int line = token.getLine();
+   		int idx = ft.lookupFunc(text);
+        if (idx == -1 && !def) {
+    		System.err.printf(
+    			"SEMANTIC ERROR (%d): function '%s' was not declared.\n",
+				line, text);
+    		passed = false;
+            System.exit(1);
+        }else if(idx != -1 && def){
+            System.err.printf(
+    			"SEMANTIC ERROR (%d): function '%s' was already declared.\n",
+				line, text);
+    		passed = false;
+            System.exit(1);
+        }
     }
     
     // Retorna true se os testes passaram.
@@ -876,12 +898,20 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
 // Visita a regra funcdef: 'def' NAME parameters ('->' test)? ':' suite
     @Override
     public AST visitFuncdef(Python3Parser.FuncdefContext ctx)
-    {        
+    {
+        Token t = ctx.NAME().getSymbol();
+        
+        checkFunc(t, true);
+        
         AST paramNode = visit(ctx.parameters());
         
-        AST blockNode = visit(ctx.suite());       
+        AST blockNode = visit(ctx.suite());
+
+        AST node = AST.newSubtree(DEF_NODE, NO_TYPE, paramNode, blockNode);
         
-        return AST.newSubtree(DEF_NODE, NO_TYPE, paramNode, blockNode);
+        ft.addFunc(t.getText(), t.getLine(), NO_TYPE, node);
+        
+        return node;
     }
 
 // Visita a regra parameters: '(' (typedargslist)? ')'
