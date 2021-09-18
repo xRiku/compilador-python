@@ -12,6 +12,7 @@ import ast.AST;
 import ast.ASTBaseVisitor;
 import tables.StrTable;
 import tables.VarTable;
+import tables.FuncTable;
 import typing.Type;
 
 /*
@@ -30,15 +31,18 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 	private final Memory memory;
 	private final StrTable st;
 	private final VarTable vt;
+	private final FuncTable ft;
 	private final Scanner in; // Para leitura de stdin
 	private int indexVar = -1;
+	private boolean func_call = false;
 
 	// Construtor basicão.
-	public Interpreter(StrTable st, VarTable vt) {
+	public Interpreter(StrTable st, VarTable vt, FuncTable ft) {
 		this.stack = new DataStack();
 		this.memory = new Memory(vt);
 		this.st = st;
 		this.vt = vt;
+		this.ft = ft;
 		this.in = new Scanner(System.in);
 	}
 
@@ -510,6 +514,48 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 		} else {
 			stack.pushi(memory.loadi(varIdx));
 		}
+		return null; // Java exige um valor de retorno mesmo para Void... :/
+	}
+
+	@Override
+	protected Void visitFuncCall(AST node) {
+		int ftIdx = node.intData;
+		for (int i = 0; i < node.getChildCount(); i++) {
+			visit(node.getChild(i));
+		}
+		AST DefNode = ft.getNode(ftIdx);
+		func_call = true;
+		visit(DefNode);
+		return null; // Java exige um valor de retorno mesmo para Void... :/
+	}
+
+	@Override
+	protected Void visitDefNode(AST node) {
+		if(func_call){
+			for (int i = 0; i < node.getChildCount(); i++) {
+				visit(node.getChild(i));
+			}
+		}
+		func_call = false;
+		return null; // Java exige um valor de retorno mesmo para Void... :/
+	}
+
+	@Override
+	protected Void visitParamNode(AST node) {
+		for (int i = node.getChildCount() -1; i >= 0; i--) {
+			int varIdx = node.getChild(i).intData;
+			if(node.getChild(i).type == FLOAT_TYPE){
+				memory.storef(varIdx, stack.popf());
+			}else{
+				memory.storei(varIdx, stack.popi());
+			}
+		}
+		return null; // Java exige um valor de retorno mesmo para Void... :/
+	}
+
+	@Override
+	protected Void visitReturn(AST node) {
+		// Nothing to do.
 		return null; // Java exige um valor de retorno mesmo para Void... :/
 	}
 

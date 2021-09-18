@@ -1,16 +1,12 @@
-
-def funcao():
-    c = 2
-    while 2 < 5:
+c = 2
+d = 5
+def verifica(c, d):    
+    print(d)
+    while c > 5:
         print(c)
-        if 1 < 6:
-            print(5)
-        elif True < 1:
-            print(6)
-        else:
-            print("ERRO")
-        
+        c = c - 1
     return
 
-
-funcao()
+a = 8
+b = 7
+verifica(a, b)

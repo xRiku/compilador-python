@@ -68,13 +68,13 @@ public class Main {
 		checker.visit(tree);
 
 		// Saída final.
-		// Interpreter interpreter = new Interpreter(checker.st, checker.vt);
-		// interpreter.execute(checker.getAST());
+		Interpreter interpreter = new Interpreter(checker.st, checker.vt, checker.ft);
+		interpreter.execute(checker.getAST());
 
 		if (checker.hasPassed()) {
-			System.out.println("PARSE SUCCESSFUL!");
-			checker.printTables();
-			checker.printAST();
+			// System.out.println("PARSE SUCCESSFUL!");
+			// checker.printTables();
+			// checker.printAST();
 		}
 	}
 

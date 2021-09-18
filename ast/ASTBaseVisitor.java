@@ -44,7 +44,11 @@ public abstract class ASTBaseVisitor<T> {
 	        case VAR_DECL_NODE: 		return visitVarDecl(node);
 	        case VAR_LIST_NODE: 		return visitVarList(node);
 	        case VAR_USE_NODE:  		return visitVarUse(node);
+			case FUNC_CALL_NODE:  		return visitFuncCall(node);
+			case DEF_NODE:  			return visitDefNode(node);
+			case PARAM_NODE:  			return visitParamNode(node);
 			case WHILE_NODE:			return visitWhile(node);
+			case RETURN_NODE:			return visitReturn(node);
 			case LESS_THAN_NODE:		return visitLt(node);	
 			case GREATER_THAN_NODE:		return visitGt(node);	
 			case GT_EQ_NODE: 			return visitGtEq(node);
@@ -103,6 +107,8 @@ public abstract class ASTBaseVisitor<T> {
 	protected abstract T visitFloatVal(AST node);
 
 	protected abstract T visitWhile(AST node);
+	
+	protected abstract T visitReturn(AST node);
 
 	protected abstract T visitStrVal(AST node);
 
@@ -111,6 +117,12 @@ public abstract class ASTBaseVisitor<T> {
 	protected abstract T visitVarList(AST node);
 
 	protected abstract T visitVarUse(AST node);
+
+	protected abstract T visitFuncCall(AST node);
+
+	protected abstract T visitDefNode(AST node);
+
+	protected abstract T visitParamNode(AST node);
 
 	protected abstract T visitPrint(AST node);
 

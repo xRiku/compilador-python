@@ -112,6 +112,8 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
 
     private Token leftvar;
 
+    private Token leftFunc;
+
     private boolean assignment = false;
 
     private boolean comparison = false;
@@ -182,10 +184,12 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
         System.out.print("\n\n");
     	System.out.print(vt);
     	System.out.print("\n\n");
+        System.out.print(ft);
+        System.out.print("\n\n");
     }
 
     public void printAST() {
-    	AST.printDot(root, vt);
+    	AST.printDot(root, vt, ft);
     }
 
     public AST getAST() {
@@ -700,7 +704,11 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
 // Visita a regra trailer: '(' (arglist)? ')' | '[' subscriptlist ']' | '.' NAME
     @Override
 	public AST visitTrailer(Python3Parser.TrailerContext ctx) {
-        if(ctx.arglist() == null && print == false && input == false) return AST.newSubtree(FUNC_CALL_NODE, NO_TYPE);
+        if(ctx.arglist() == null && print == false && input == false){
+            checkFunc(leftFunc, false);
+            int fidx = ft.lookupFunc(leftFunc.getText());            
+            return new AST(FUNC_CALL_NODE, fidx, NO_TYPE);
+        } 
         else if (ctx.arglist() == null && print){
             print = false;
             return AST.newSubtree(PRINT_NODE, NO_TYPE);            
@@ -719,6 +727,11 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
     @Override
     public AST visitArglist(Python3Parser.ArglistContext ctx) {
         AST node = AST.newSubtree(FUNC_CALL_NODE, NO_TYPE);
+        if(print == false && input == false){
+            checkFunc(leftFunc, false);
+            int fidx = ft.lookupFunc(leftFunc.getText());
+            node = new AST(FUNC_CALL_NODE, fidx, NO_TYPE);
+        }        
         if(print){
             node = AST.newSubtree(PRINT_NODE, NO_TYPE);
             print = false;
@@ -771,11 +784,13 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
     @Override
     public AST visitAtomName(Python3Parser.AtomNameContext ctx) {
     	// Visita a declaração de tipo para definir a variável lastDeclType.
-		if(function){
+		if(function){            
             if(ctx.NAME().getText().equals("print")){
               print = true;  
             }else if(ctx.NAME().getText().equals("input")){
                 input = true;  
+            }else{
+                leftFunc = ctx.NAME().getSymbol();
             }
             return null;
         }

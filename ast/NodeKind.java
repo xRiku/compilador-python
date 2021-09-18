@@ -49,7 +49,7 @@ public enum NodeKind {
 	},
     FUNC_CALL_NODE {
 		public String toString() {
-            return "function";
+            return "func_call";
         }
 	},
     PRINT_NODE {
@@ -296,7 +296,8 @@ public enum NodeKind {
 	        case FLOAT_VAL_NODE:
 	        case STR_VAL_NODE:
 	        case VAR_DECL_NODE:
-	        case VAR_USE_NODE:
+            case FUNC_CALL_NODE:
+	        case VAR_USE_NODE:            
 	            return true;
 	        default:
 	            return false;
