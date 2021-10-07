@@ -15,15 +15,7 @@ import tables.VarTable;
 import tables.FuncTable;
 import typing.Type;
 
-/*
- * Interpretador de código para EZLang, implementado como
- * um visitador da AST gerada pelo front-end. Tipo genérico
- * foi instanciado para Void porque a gente não precisa de
- * um valor de retorno na visitação. Para o gerador de código
- * do próximo laboratório isso vai mudar.
- *
- * Para rodar, chame o método 'execute' da superclasse.
- */
+
 public class Interpreter extends ASTBaseVisitor<Void> {
 
 	// Tudo privado e final para simplificar.
@@ -34,6 +26,7 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 	private final FuncTable ft;
 	private final Scanner in; // Para leitura de stdin
 	private int indexVar = -1;
+	private Type lasTypeFunc = Type.NO_TYPE;
 	private boolean func_call = false;
 
 	// Construtor basicão.
@@ -45,12 +38,6 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 		this.ft = ft;
 		this.in = new Scanner(System.in);
 	}
-
-	// -------------------------------------------------------
-	// Daqui para frente são os métodos especializados de cada
-	// nó. O código deve ser mais ou menos auto-explicativo.
-	// Estou assumindo que nessa altura de tudo você já está
-	// ninja dos caminhamentos em árvores...
 
 	@Override
 	protected Void visitFile_input(AST node) {
@@ -72,7 +59,6 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 		visit(rexpr);
 		// Armazena o valor da pilha na memória, conforme o tipo
 		// da variável.
-		// int varIdx = node.getChild(0).intData;
 		Type varType = vt.getType(varIdx);
 		if (varType == FLOAT_TYPE) {
 			memory.storef(varIdx, stack.popf());
@@ -404,45 +390,10 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 
 	@Override
 	protected Void visitRead(AST node) {
-		// int varIdx = node.getChild(0).intData;
-		// Type varType = vt.getType(varIdx);
 		readStr(indexVar);
-		// switch(varType) {
-		// 	case INT_TYPE:  readInt(varIdx);    break;
-	    //     case FLOAT_TYPE: readReal(varIdx);   break;
-	    //     case BOOL_TYPE: readBool(varIdx);   break;
-	    //     case STR_TYPE:  readStr(varIdx);    break;
-		// 	case NO_TYPE:
-		//     default:
-	    //         System.err.printf("Invalid type: %s!\n", varType.toString());
-	    //         System.exit(1);
-		// }
 		return null; // Java exige um valor de retorno mesmo para Void... :/
 	}
 
-	private Void readInt(int varIdx) {
-		System.out.printf("read (int): ");
-		int value = in.nextInt();
-		memory.storei(varIdx, value);
-		return null; // Java exige um valor de retorno mesmo para Void... :/
-	}
-
-	private Void readReal(int varIdx) {
-		System.out.printf("read (real): ");
-		float value = in.nextFloat();
-		memory.storef(varIdx, value);
-		return null; // Java exige um valor de retorno mesmo para Void... :/
-	}
-
-	private Void readBool(int varIdx) {
-		int value;
-	    do {
-	        System.out.printf("read (bool - 0 = false, 1 = true): ");
-	        value = in.nextInt();
-	    } while (value != 0 && value != 1);
-	    memory.storei(varIdx, value);
-	    return null; // Java exige um valor de retorno mesmo para Void... :/
-	}
 
 	private Void readStr(int varIdx) {
 		System.out.printf("read (str): ");
@@ -523,9 +474,10 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 		for (int i = 0; i < node.getChildCount(); i++) {
 			visit(node.getChild(i));
 		}
-		AST DefNode = ft.getNode(ftIdx);
+		AST DefNode = ft.getNode(ftIdx);		
 		func_call = true;
 		visit(DefNode);
+		node.type = lasTypeFunc;
 		return null; // Java exige um valor de retorno mesmo para Void... :/
 	}
 
@@ -555,7 +507,8 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 
 	@Override
 	protected Void visitReturn(AST node) {
-		// Nothing to do.
+		visit(node.getChild(0));
+		lasTypeFunc = node.getChild(0).type;
 		return null; // Java exige um valor de retorno mesmo para Void... :/
 	}
 
@@ -573,7 +526,6 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 	            System.err.printf("Invalid type: %s!\n", expr.type.toString());
 	            System.exit(1);
 		}
-		// System.out.println();
 		return null; // Java exige um valor de retorno mesmo para Void... :/
 	}
 
@@ -634,7 +586,6 @@ public class Interpreter extends ASTBaseVisitor<Void> {
 	@Override
 	protected Void visitB2I(AST node) {
 		visit(node.getChild(0));
-	    // Nothing else to do, a bool already is stored as an int.
 		return null; // Java exige um valor de retorno mesmo para Void... :/
 	}
 

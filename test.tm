@@ -1,0 +1,33 @@
+SSTR "decrementando\n"
+LDIi 0, 2
+STWi 0, 0
+LDIi 1, 5
+STWi 1, 1
+LDIi 2, 10
+STWi 2, 2
+LDIi 3, 3
+STWi 3, 3
+LDIi 4, 8
+STWi 4, 4
+LDWi 5, 2
+LDWi 6, 3
+STWi 1, 6
+LDWi 7, 1
+STWi 0, 5
+LDWi 8, 0
+LDWi 9, 0
+LDWi 10, 1
+GTHi 11, 9, 10
+BOFb 11, 8
+LDIi 12, 0
+CALL 7, 12
+LDWi 13, 0
+LDIi 14, 1
+SUBi 15, 13, 14
+STWi 0, 15
+BOTb 11, -10
+LDWi 16, 0
+STWi 4, 16
+LDWi 17, 4
+CALL 4, 17
+HALT

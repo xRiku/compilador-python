@@ -104,7 +104,7 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
     public final VarTable vt = new VarTable();   // Tabela de variáveis.
     public final FuncTable ft = new FuncTable(); // Tabela de Funções
     
-    Type lastDeclType;  // Variável "global" com o último tipo declarado.
+    Type lastType;  // Variável "global" com o último tipo declarado.
     
     AST root;
 
@@ -112,7 +112,7 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
 
     private Token leftvar;
 
-    private Token leftFunc;
+    private Token leftFunc;    
 
     private boolean assignment = false;
 
@@ -137,7 +137,8 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
 				line, text);
     		passed = false;
             return null;
-        }        
+        }
+        lastType = vt.getType(idx);
         return new AST(VAR_USE_NODE, idx, vt.getType(idx));        
     }
     
@@ -303,7 +304,12 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
 
     @Override
 	public AST visitReturn_stmt(Python3Parser.Return_stmtContext ctx) {
-        return AST.newSubtree(RETURN_NODE, NO_TYPE);
+        AST node = AST.newSubtree(RETURN_NODE, INT_TYPE);
+        if(ctx.testlist() != null){
+            AST child = visit(ctx.testlist());
+            node.addChild(child);
+        }
+        return node;
     }
     
 // Visita a regra expr_stmt: testlist_star_expr (annassign | augassign (yield_expr|testlist) |(assign_stmt (yield_expr|testlist_star_expr))*);
@@ -707,7 +713,7 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
         if(ctx.arglist() == null && print == false && input == false){
             checkFunc(leftFunc, false);
             int fidx = ft.lookupFunc(leftFunc.getText());            
-            return new AST(FUNC_CALL_NODE, fidx, NO_TYPE);
+            return new AST(FUNC_CALL_NODE, fidx, INT_TYPE);
         } 
         else if (ctx.arglist() == null && print){
             print = false;
@@ -726,11 +732,11 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
 // Visita a regra arglist: argument (',' argument)*  (',')?
     @Override
     public AST visitArglist(Python3Parser.ArglistContext ctx) {
-        AST node = AST.newSubtree(FUNC_CALL_NODE, NO_TYPE);
+        AST node = AST.newSubtree(FUNC_CALL_NODE, INT_TYPE);
         if(print == false && input == false){
             checkFunc(leftFunc, false);
             int fidx = ft.lookupFunc(leftFunc.getText());
-            node = new AST(FUNC_CALL_NODE, fidx, NO_TYPE);
+            node = new AST(FUNC_CALL_NODE, fidx, INT_TYPE);
         }        
         if(print){
             node = AST.newSubtree(PRINT_NODE, NO_TYPE);
@@ -776,8 +782,7 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
             if (vt.getType(idx) != Type.FLOAT_TYPE) vt.setType(idx, localtype);
         }
         if(localtype == Type.FLOAT_TYPE) return new AST(FLOAT_VAL_NODE, floatNumber, FLOAT_TYPE);
-        else return new AST(INT_VAL_NODE, integerNumber, INT_TYPE);
-		
+        else return new AST(INT_VAL_NODE, integerNumber, INT_TYPE);		
     }
     
 // Visita a regra atom: NAME
@@ -922,9 +927,9 @@ public class SemanticChecker extends Python3ParserBaseVisitor<AST> {
         
         AST blockNode = visit(ctx.suite());
 
-        AST node = AST.newSubtree(DEF_NODE, NO_TYPE, paramNode, blockNode);
+        AST node = AST.newSubtree(DEF_NODE, INT_TYPE, paramNode, blockNode);
         
-        ft.addFunc(t.getText(), t.getLine(), NO_TYPE, node);
+        ft.addFunc(t.getText(), t.getLine(), INT_TYPE, node);
         
         return node;
     }

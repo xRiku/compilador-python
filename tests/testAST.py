@@ -1,4 +1,5 @@
 if 1 < 3:
-    x = "teste"
+    x = "teste\n"
 else:
-    x = "outra coisa"
+    x = "outra coisa\n"
+print(x)

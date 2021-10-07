@@ -11,18 +11,12 @@ u = 10/2
 i = 0
 while i < 3:
     i = i + 1 
-    print(y + " testando")
+    print(i)
+    print(y + " testando\n")
 
 
 if x < 4:
     x = 4
-    print(x)
-elif x == 5:
-    print(x)
-elif x == 6:
-    print(x)
-elif x == 7:
-    x = x + 12
     print(x)
 else:
     x = 0

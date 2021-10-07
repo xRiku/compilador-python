@@ -45,6 +45,8 @@ javac:
 run:
 	$(JAVA) $(CLASS_PATH_OPTION):$(BIN_PATH) Main $(FILE)
 
+tm: tm.c tables.c types.c
+	gcc -Wall -Wconversion -o tmsim tm.c tables.c types.c
 
 
 clean:

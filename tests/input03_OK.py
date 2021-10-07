@@ -1,14 +1,12 @@
-x = [1,2,3]
-y = ["eu", "tu", "ele"]
-teste = [x+2, 3 * 5]
-[3,4,"banana"]
-[]
-x = 2
-2 > x
-def f(x):
-    x = x + 2
-    y = x * x 
-    if 3 > 0: 
-        return 3
+def say_hello():
+    print("Hello, World!")
+
+x = 5
+while x < 8:
+    x = x + 1
+    if x == 4:
+        print("Eh 4")
     else:
-        return y
+        print("Nao eh 4")
+
+y = say_hello()

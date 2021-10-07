@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import checker.SemanticChecker;
 import code.Interpreter;
+import code.CodeGen;
 import org.antlr.v4.gui.TreeViewer;
 import parser.Python3Lexer;
 import parser.Python3Parser;
@@ -68,8 +69,11 @@ public class Main {
 		checker.visit(tree);
 
 		// Saída final.
-		Interpreter interpreter = new Interpreter(checker.st, checker.vt, checker.ft);
-		interpreter.execute(checker.getAST());
+		// Interpreter interpreter = new Interpreter(checker.st, checker.vt, checker.ft);
+		// interpreter.execute(checker.getAST());
+
+		CodeGen codeGen = new CodeGen(checker.st, checker.vt, checker.ft);
+		codeGen.execute(checker.getAST());
 
 		if (checker.hasPassed()) {
 			// System.out.println("PARSE SUCCESSFUL!");
